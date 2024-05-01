@@ -1,0 +1,4 @@
+REQUIREMENTS:
+
+pyodbc
+odbc for Microsoft

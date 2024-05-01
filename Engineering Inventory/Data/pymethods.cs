@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Python.Runtime;
 
 namespace Engineering_Inventory
@@ -10,18 +9,21 @@ namespace Engineering_Inventory
 
         public void InitializePythonEngine()
         {
-            // Set the path to the Python DLL
-            Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
+            // Correctly set the path to the Python DLL
+            Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
+
+            // Set the Python path
+            Environment.SetEnvironmentVariable("PYTHONPATH", @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\Lib\site-packages");
 
             // Initialize Python engine
             PythonEngine.Initialize();
 
-            // Append directory containing Python module to sys.path
-            string moduleDirectory = @"C:\users\dboyer\source\repos\Engineering Inventory\Engineering Inventory\Data";
-            PythonEngine.Exec($"import sys; sys.path.append('{moduleDirectory}')");
-
-            // Import the Python module
-            pythonModule = Py.Import("EngInvDB");
+            // Acquire the Python Global Interpreter Lock
+            using (Py.GIL())
+            {
+                // Import the Python module
+                pythonModule = Py.Import("Data.EngInvDB");
+            }
         }
 
         public void ShutdownPythonEngine()

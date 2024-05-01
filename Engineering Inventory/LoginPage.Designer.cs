@@ -58,7 +58,9 @@
             usernameBox.Location = new Point(12, 27);
             usernameBox.Name = "usernameBox";
             usernameBox.Size = new Size(100, 23);
-            usernameBox.TabIndex = 2;
+            usernameBox.TabIndex = 1;
+            usernameBox.KeyPress += usernameBox_KeyPress;
+            usernameBox.DpiChangedAfterParent += b;
             // 
             // passwordBox
             // 
@@ -66,7 +68,8 @@
             passwordBox.Name = "passwordBox";
             passwordBox.PasswordChar = '*';
             passwordBox.Size = new Size(100, 23);
-            passwordBox.TabIndex = 3;
+            passwordBox.TabIndex = 2;
+            passwordBox.KeyPress += passwordBox_KeyPress;
             // 
             // logInButton
             // 
@@ -74,10 +77,11 @@
             logInButton.Location = new Point(12, 100);
             logInButton.Name = "logInButton";
             logInButton.Size = new Size(100, 32);
-            logInButton.TabIndex = 4;
+            logInButton.TabIndex = 3;
             logInButton.Text = "Log In";
             logInButton.UseVisualStyleBackColor = true;
             logInButton.Click += logInButton_Click;
+            logInButton.KeyPress += logInButton_KeyPress;
             // 
             // loginWindow
             // 
@@ -91,6 +95,7 @@
             Controls.Add(usernameText);
             Name = "loginWindow";
             Text = "Log In";
+            KeyPress += loginWindow_KeyPress;
             ResumeLayout(false);
             PerformLayout();
         }

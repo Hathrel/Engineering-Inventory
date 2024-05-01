@@ -44,16 +44,9 @@ def database_login(username, password):
     finally:
         close_database_connection(connection, cursor)
 
-def query_table(cursor,table_name):
-    try:
-        cursor.execute(f"SELECT 1 from {table_name}")
-        cursor.fetchall()
-        return True
-    except db.Error:
-        return False
-
 def open_database_connection():
-    db_path = r"C:\Users\dboyer\Documents\Engineering Inventory\Engineering_Inventory.accdb"
+    db_path = r"C:\\Users\\Derek\\source\\repos\\Engineering-Inventory\\Engineering_Inventory.accdb"
+    #db_path = r"C:\Users\dboyer\Documents\Engineering Inventory\Engineering_Inventory.accdb"
     connection_string = fr"DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={db_path};"
     try:
         connection = db.connect(connection_string)
@@ -67,6 +60,14 @@ def close_database_connection(connection, cursor=None):
         cursor.close()
     if connection:
         connection.close()
+
+def query_table(cursor,table_name):
+    try:
+        cursor.execute(f"SELECT 1 from {table_name}")
+        cursor.fetchall()
+        return True
+    except db.Error:
+        return False
 
 def insert_part(part_number, location, qty, validated):
     if validated != True:

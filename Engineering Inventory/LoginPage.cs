@@ -10,11 +10,11 @@ namespace Engineering_Inventory
         public loginWindow()
         {
             InitializeComponent();
-
             // Create an instance of PythonInterop
             pI = new PythonInterop();
             pI.InitializePythonEngine();
         }
+
         private void logInButton_Click(object sender, EventArgs e)
         {
             string username = usernameBox.Text;
@@ -28,9 +28,6 @@ namespace Engineering_Inventory
                 // Handle the result
                 if (success)
                 {
-                    // Show a success message (optional)
-                    MessageBox.Show(message, "Login Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                     // Close the current login form
                     this.Close();
 
@@ -50,8 +47,51 @@ namespace Engineering_Inventory
                 MessageBox.Show("Error during login: " + ex.Message);
             }
         }
+
+        private void loginWindow_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Check if the Enter key is pressed
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                e.Handled = true;
+                SelectNextControl((Control)sender, true, true, true, true);
+            }
+        }
+
+        private void usernameBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)(char)Keys.Enter)
+            {
+                e.Handled = true;
+                SelectNextControl((Control)sender, true, true, true, true);
+            }
+        }
+
+        private void logInButton_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)(char)Keys.Enter)
+            {
+                e.Handled = true;
+                SelectNextControl((Control)sender, true, true, true, true);
+            }
+        }
+
+        private void passwordBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)(char)Keys.Enter)
+            {
+                e.Handled = true;
+                SelectNextControl((Control)sender, true, true, true, true);
+            }
+        }
+
+        private void b(object sender, EventArgs e)
+        {
+
+        }
     }
 }
+
 
 
 
