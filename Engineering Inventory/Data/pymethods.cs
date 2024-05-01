@@ -10,10 +10,11 @@ namespace Engineering_Inventory
         public void InitializePythonEngine()
         {
             // Correctly set the path to the Python DLL
-            Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
+            Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
+            //Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
 
             // Set the Python path
-            Environment.SetEnvironmentVariable("PYTHONPATH", @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\Lib\site-packages");
+            //Environment.SetEnvironmentVariable("PYTHONPATH", @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\Lib\site-packages");
 
             // Initialize Python engine
             PythonEngine.Initialize();
@@ -32,7 +33,7 @@ namespace Engineering_Inventory
             PythonEngine.Shutdown();
         }
 
-        public (bool, string, dynamic) DatabaseLogin(string username, string password)
+        public (bool, string, dynamic, string) DatabaseLogin(string username, string password)
         {
             try
             {
@@ -44,7 +45,7 @@ namespace Engineering_Inventory
                 string message = result[1];
                 dynamic permissions = result[2];
 
-                return (success, message, permissions);
+                return (success, message, permissions, username);
             }
             catch (PythonException ex)
             {
@@ -55,9 +56,24 @@ namespace Engineering_Inventory
                 string errorString = $"Python error occurred: {ex.Message}\n Stack Trace: {ex.Traceback}";
 
                 // Return detailed error message
-                return (false, errorString, null);
+                return (false, errorString, null, null);
             }
         }
+        public bool InsertInventory(string part, string qty, string location, dynamic permission)
+        {
+            try
+            {
+                bool result = pythonModule.insert_part(part, qty, location, permission);
+                return result;
+            }
+            catch (PythonException ex)
+            {
+                string errorString = $"Python error occurred: {ex.Message}\n Stack Trace: {ex.Traceback}";
+                MessageBox.Show(errorString);
+                return false;
+            }
+        }
+
     }
 }
 

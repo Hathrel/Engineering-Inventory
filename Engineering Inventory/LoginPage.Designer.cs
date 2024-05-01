@@ -60,7 +60,6 @@
             usernameBox.Size = new Size(100, 23);
             usernameBox.TabIndex = 1;
             usernameBox.KeyPress += usernameBox_KeyPress;
-            usernameBox.DpiChangedAfterParent += b;
             // 
             // passwordBox
             // 
