@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Python.Runtime;
 
 namespace Engineering_Inventory
@@ -59,12 +60,42 @@ namespace Engineering_Inventory
                 return (false, errorString, null, null);
             }
         }
-        public bool InsertInventory(string part, string qty, string location, dynamic permission)
+        public bool EditInventory(string part, string qty, string location, string module, string location2 = null)
         {
+            dynamic pythonFunc = null;
+            switch (module)
+            {
+                case "Insert":
+                    pythonFunc = pythonModule.insert_part;
+                    break;
+                case "Picking":
+                    pythonFunc = pythonModule.pick_part;
+                    break;
+            }
             try
             {
-                bool result = pythonModule.insert_part(part, qty, location, permission);
-                return result;
+                dynamic result = pythonFunc(part, qty, location, location2);
+
+                if (result.ToString() == "True")
+                {
+                    // Case 1: Python function returns a boolean directly
+                    return true;
+                }
+                else if (result is PyObject tuple && tuple.HasAttr("Item1") && tuple.HasAttr("Item2"))
+                {
+                    // Case 2: Python function returns a tuple containing (bool, string)
+                    bool successBool = tuple.GetAttr("Item1").As<bool>();
+                    string message = tuple.GetAttr("Item2").As<string>();
+                    MessageBox.Show(message); // Show the message in the message box
+                    return successBool;
+                }
+                else
+                {
+                    // Unexpected return type
+                    MessageBox.Show("Unexpected return type from Python function");
+                    MessageBox.Show(result.ToString()); // Show the result in the message box
+                    return false;
+                }
             }
             catch (PythonException ex)
             {
@@ -73,7 +104,6 @@ namespace Engineering_Inventory
                 return false;
             }
         }
-
     }
 }
 

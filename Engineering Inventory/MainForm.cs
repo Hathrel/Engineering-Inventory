@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-
-    // MainForm.cs
-namespace Engineering_Inventory
+﻿namespace Engineering_Inventory
 {
     // MainForm.cs
     public partial class MainForm : Form
@@ -36,8 +23,6 @@ namespace Engineering_Inventory
             purchasePermission = permissions["Purchase"];
         }
 
-
-
         private void MainForm_Load(object sender, EventArgs e)
         {
 
@@ -45,8 +30,14 @@ namespace Engineering_Inventory
 
         private void insertButton_Click(object sender, EventArgs e)
         {
-            InsertInventory insertInventory = new InsertInventory(insertPermission);
-            insertInventory.ShowDialog();
+            if (!insertPermission)
+            {
+                MessageBox.Show("You don't have permission to do that!");
+                return;
+            }
+
+            InsertInventory insertInventory = new(insertPermission, pI);
+                insertInventory.ShowDialog();
         }
     }
 }

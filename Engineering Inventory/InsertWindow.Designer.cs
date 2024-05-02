@@ -57,6 +57,7 @@
             qtyBox.Name = "qtyBox";
             qtyBox.Size = new Size(100, 23);
             qtyBox.TabIndex = 2;
+            qtyBox.KeyPress += qtyBox_KeyPress;
             // 
             // partBox
             // 
@@ -64,6 +65,7 @@
             partBox.Name = "partBox";
             partBox.Size = new Size(100, 23);
             partBox.TabIndex = 1;
+            partBox.KeyPress += partBox_KeyPress;
             // 
             // locBox
             // 
@@ -71,6 +73,7 @@
             locBox.Name = "locBox";
             locBox.Size = new Size(100, 23);
             locBox.TabIndex = 3;
+            locBox.KeyPress += locBox_KeyPress;
             // 
             // PartNumberLabel
             // 
