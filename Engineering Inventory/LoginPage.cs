@@ -1,8 +1,3 @@
-using System;
-using System.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Windows.Forms;
-
 namespace Engineering_Inventory
 {
     // loginWindow.cs
@@ -24,14 +19,14 @@ namespace Engineering_Inventory
         {
             string username = usernameBox.Text;
             string password = passwordBox.Text;
-            string site = SiteSelection.Text;
+            //string site = SiteSelection.Text;
 
             try
             {
                 // Call DatabaseLogin method from PythonInterop
-                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text))
                 {
-                    (bool success, string message, dynamic permissions, string loggedInUsername) = pI.DatabaseLogin(username, password, site);
+                    (bool success, string message, dynamic permissions, string loggedInUsername) = pI.DatabaseLogin(username, password);
 
                     // Handle the result
                     if (success)
@@ -69,7 +64,7 @@ namespace Engineering_Inventory
         {
             if (e.KeyChar == (char)Keys.Enter)
             {
-                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text))
                 {
                     e.Handled = true;
                     logInButton_Click(sender, e);
@@ -87,7 +82,7 @@ namespace Engineering_Inventory
             // Check if the Enter key is pressed
             if (e.KeyChar == (char)Keys.Enter)
             {
-                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text))
                 {
                     e.Handled = true;
                     logInButton_Click(sender, e);
@@ -104,7 +99,7 @@ namespace Engineering_Inventory
         {
             if (e.KeyChar == (char)Keys.Enter)
             {
-                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text))
                 {
                     e.Handled = true;
                     logInButton_Click(sender, e);
@@ -121,7 +116,7 @@ namespace Engineering_Inventory
         {
             if (e.KeyChar == (char)Keys.Enter)
             {
-                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text))
                 {
                     e.Handled = true;
                     logInButton_Click(sender, e);
@@ -132,24 +127,6 @@ namespace Engineering_Inventory
                     SelectNextControl((Control)sender, true, true, true, true);
                 }
             }
-        }
-
-        private void SiteSelection_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)Keys.Enter)
-            {
-                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
-                {
-                    e.Handled = true;
-                    logInButton_Click(sender, e);
-                }
-                else
-                {
-                    e.Handled = true;
-                    SelectNextControl((Control)sender, true, true, true, true);
-                }
-            }
-
         }
     }
 }

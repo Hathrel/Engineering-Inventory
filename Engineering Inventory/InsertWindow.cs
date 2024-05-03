@@ -9,7 +9,7 @@
             pI = pythonInterop;
             permission = app_permisson;
             InitializeComponent();
-            InsertStatus.Text = $"Hello {Program.user_name}, you are working in {Program.sitePermission}";
+            InsertStatus.Text = $"Hello {Program.user_name}, you are working in SITEHERE";
         }
 
         private void SubmitButton_Click(object sender, EventArgs e)

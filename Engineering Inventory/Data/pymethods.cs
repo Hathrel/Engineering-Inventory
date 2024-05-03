@@ -11,8 +11,8 @@ namespace Engineering_Inventory
         public void InitializePythonEngine()
         {
             // Correctly set the path to the Python DLL
-            //Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
-            Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
+            Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
+            //Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
 
             // Set the Python path
             //Environment.SetEnvironmentVariable("PYTHONPATH", @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\Lib\site-packages");
@@ -34,7 +34,7 @@ namespace Engineering_Inventory
             PythonEngine.Shutdown();
         }
 
-        public (bool, string, dynamic, string) DatabaseLogin(string username, string password, string site)
+        public (bool, string, dynamic, string) DatabaseLogin(string username, string password)
         {
             try
             {
@@ -51,12 +51,16 @@ namespace Engineering_Inventory
             catch (PythonException ex)
             {
                 // Handle Python exception
+                // Log or display the exception details
+                Console.WriteLine($"Python Exception: {ex.Message}");
+                Console.WriteLine($"Python Traceback: {ex.Traceback}");
                 string errorString = $"Python error occurred: {ex.Message}\n Stack Trace: {ex.Traceback}";
 
                 // Return detailed error message
                 return (false, errorString, null, null);
             }
         }
+
         public bool EditInventory(string part, string qty, string location, string module, string location2 = null)
         {
             dynamic pythonFunc = null;
@@ -76,6 +80,7 @@ namespace Engineering_Inventory
                 if (result.ToString() == "True")
                 {
                     // Case 1: Python function returns a boolean directly
+                    
                     return true;
                 }
                 else if (result is PyObject tuple && tuple.HasAttr("Item1") && tuple.HasAttr("Item2"))

@@ -33,8 +33,6 @@
             usernameBox = new TextBox();
             passwordBox = new TextBox();
             logInButton = new Button();
-            SiteSelection = new ComboBox();
-            SiteText = new Label();
             SuspendLayout();
             // 
             // usernameText
@@ -75,7 +73,7 @@
             // logInButton
             // 
             logInButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            logInButton.Location = new Point(12, 142);
+            logInButton.Location = new Point(12, 100);
             logInButton.Name = "logInButton";
             logInButton.Size = new Size(100, 32);
             logInButton.TabIndex = 4;
@@ -84,32 +82,11 @@
             logInButton.Click += logInButton_Click;
             logInButton.KeyPress += logInButton_KeyPress;
             // 
-            // SiteSelection
-            // 
-            SiteSelection.Font = new Font("Segoe UI", 8F);
-            SiteSelection.FormattingEnabled = true;
-            SiteSelection.Items.AddRange(new object[] { "CVG2", "LEX1", "117", "1305", "1365", "YYZ" });
-            SiteSelection.Location = new Point(12, 115);
-            SiteSelection.Name = "SiteSelection";
-            SiteSelection.Size = new Size(100, 21);
-            SiteSelection.TabIndex = 3;
-            // 
-            // SiteText
-            // 
-            SiteText.AutoSize = true;
-            SiteText.Location = new Point(22, 96);
-            SiteText.Name = "SiteText";
-            SiteText.Size = new Size(77, 15);
-            SiteText.TabIndex = 5;
-            SiteText.Text = "Site Selection";
-            // 
             // loginWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(121, 186);
-            Controls.Add(SiteText);
-            Controls.Add(SiteSelection);
+            ClientSize = new Size(121, 142);
             Controls.Add(logInButton);
             Controls.Add(passwordBox);
             Controls.Add(usernameBox);

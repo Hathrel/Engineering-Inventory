@@ -9,12 +9,11 @@ namespace Engineering_Inventory
     internal static class Program
     {
         private static bool terminated = false;
-        private static PythonInterop pI; // Declare a field to hold an instance of PythonInterop
+        private static PythonInterop pI;
         public static bool pickingPermission;
         public static bool insertPermission;
         public static bool editPermission;
         public static bool purchasePermission;
-        public static string sitePermission;
         public static string user_name;
 
         [STAThread]

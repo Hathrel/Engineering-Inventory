@@ -16,9 +16,8 @@
             Program.insertPermission = permissions["Insert"];
             Program.editPermission = permissions["Edit"];
             Program.purchasePermission = permissions["Purchase"];
-            Program.sitePermission = permissions["Site"].ToString();
 
-            welcomeLabel.Text = $"Welcome {username}, you are working in {Program.sitePermission.ToString()}";
+            welcomeLabel.Text = $"Welcome {username}, you are working in SITEHERE";
         }
         private void insertButton_Click(object sender, EventArgs e)
         {
