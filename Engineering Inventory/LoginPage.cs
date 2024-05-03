@@ -24,29 +24,38 @@ namespace Engineering_Inventory
         {
             string username = usernameBox.Text;
             string password = passwordBox.Text;
+            string site = SiteSelection.Text;
 
             try
             {
                 // Call DatabaseLogin method from PythonInterop
-                (bool success, string message, dynamic permissions, string loggedInUsername) = pI.DatabaseLogin(username, password);
-
-                // Handle the result
-                if (success)
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
                 {
-                    // Close the current login form
-                    loginSuccess = true;
-                    user_permissions = permissions;
-                    string loggedInUsernameValue = loggedInUsername; // Store the value in a separate variable
+                    (bool success, string message, dynamic permissions, string loggedInUsername) = pI.DatabaseLogin(username, password, site);
 
-                    LoginSuccessful?.Invoke(this, loggedInUsername);
+                    // Handle the result
+                    if (success)
+                    {
+                        // Close the current login form
+                        loginSuccess = true;
+                        user_permissions = permissions;
+                        string loggedInUsernameValue = loggedInUsername; // Store the value in a separate variable
 
-                    // Close the current instance of loginWindow
-                    Close();
+                        LoginSuccessful?.Invoke(this, loggedInUsername);
+
+                        // Close the current instance of loginWindow
+                        Close();
+                    }
+                    else
+                    {
+                        // Show error message if login failed
+                        MessageBox.Show(message, "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {
-                    // Show error message if login failed
-                    MessageBox.Show(message, "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please fill in all fields.");
+                    SelectNextControl((Control)sender, true, true, true, true);
                 }
             }
             catch (Exception ex)
@@ -56,44 +65,91 @@ namespace Engineering_Inventory
             }
         }
 
+        private void logInButton_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
+                {
+                    e.Handled = true;
+                    logInButton_Click(sender, e);
+                }
+                else
+                {
+                    SelectNextControl((Control)sender, true, true, true, true);
+                }
+            }
 
+        }
 
         private void loginWindow_KeyPress(object sender, KeyPressEventArgs e)
         {
             // Check if the Enter key is pressed
             if (e.KeyChar == (char)Keys.Enter)
             {
-                e.Handled = true;
-                SelectNextControl((Control)sender, true, true, true, true);
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
+                {
+                    e.Handled = true;
+                    logInButton_Click(sender, e);
+                }
+                else
+                {
+                    SelectNextControl((Control)sender, true, true, true, true);
+                }
             }
+
         }
 
         private void usernameBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (char)(char)Keys.Enter)
+            if (e.KeyChar == (char)Keys.Enter)
             {
-                e.Handled = true;
-                SelectNextControl((Control)sender, true, true, true, true);
-            }
-        }
-
-        private void logInButton_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)(char)Keys.Enter)
-            {
-                e.Handled = true;
-                SelectNextControl((Control)sender, true, true, true, true);
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
+                {
+                    e.Handled = true;
+                    logInButton_Click(sender, e);
+                }
+                else
+                {
+                    e.Handled = true;
+                    SelectNextControl((Control)sender, true, true, true, true);
+                }
             }
         }
 
         private void passwordBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (char)(char)Keys.Enter)
+            if (e.KeyChar == (char)Keys.Enter)
             {
-                e.Handled = true;
-                SelectNextControl((Control)sender, true, true, true, true);
-                logInButton_Click(sender, e);
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
+                {
+                    e.Handled = true;
+                    logInButton_Click(sender, e);
+                }
+                else
+                {
+                    e.Handled = true;
+                    SelectNextControl((Control)sender, true, true, true, true);
+                }
             }
+        }
+
+        private void SiteSelection_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelection.Text))
+                {
+                    e.Handled = true;
+                    logInButton_Click(sender, e);
+                }
+                else
+                {
+                    e.Handled = true;
+                    SelectNextControl((Control)sender, true, true, true, true);
+                }
+            }
+
         }
     }
 }

@@ -1,15 +1,15 @@
 ﻿namespace Engineering_Inventory
 {
-    public partial class InsertInventory : Form
+    public partial class PickingInventory : Form
     {
         private readonly PythonInterop pI;
         bool app_permisson;
-        public InsertInventory(bool permission, PythonInterop pythonInterop)
+        public PickingInventory(bool permission, PythonInterop pythonInterop)
         {
             pI = pythonInterop;
             permission = app_permisson;
             InitializeComponent();
-            InsertStatus.Text = $"Hello {Program.user_name}, you are working in {Program.sitePermission}";
+            PickingStatus.Text = $"Hello {Program.user_name}, you are working in {Program.sitePermission}";
         }
 
         private void SubmitButton_Click(object sender, EventArgs e)
@@ -20,7 +20,7 @@
                 string qty = qtyBox.Text;
                 string location = locBox.Text;
 
-                bool result = pI.EditInventory(part_number, qty, location, "Insert");
+                bool result = pI.EditInventory(part_number, qty, location, "Picking");
                 if (result)
                 {
                     MessageBox.Show("Part updated successfully.");

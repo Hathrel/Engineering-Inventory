@@ -10,7 +10,11 @@ namespace Engineering_Inventory
     {
         private static bool terminated = false;
         private static PythonInterop pI; // Declare a field to hold an instance of PythonInterop
-        private static dynamic user_permissions; // Declare a field to hold user permissions
+        public static bool pickingPermission;
+        public static bool insertPermission;
+        public static bool editPermission;
+        public static bool purchasePermission;
+        public static string sitePermission;
         public static string user_name;
 
         [STAThread]
@@ -33,8 +37,8 @@ namespace Engineering_Inventory
             // Check if login was successful
             if (loginWindow.loginSuccess)
             {
-                // Store user permissions
-                dynamic userPermissions = loginWindow.user_permissions;
+        // Store user permissions
+        dynamic userPermissions = loginWindow.user_permissions;
 
                 // Create MainForm instance only if login was successful
                 MainForm mainForm = new MainForm(pI, userPermissions, user_name);

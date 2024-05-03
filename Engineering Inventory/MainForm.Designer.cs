@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             actionsBox = new GroupBox();
+            PickingButton = new Button();
             insertButton = new Button();
             welcomeLabel = new Label();
             actionsBox.SuspendLayout();
@@ -37,14 +38,26 @@
             // actionsBox
             // 
             actionsBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            actionsBox.Controls.Add(PickingButton);
             actionsBox.Controls.Add(insertButton);
             actionsBox.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
             actionsBox.Location = new Point(12, 29);
             actionsBox.Name = "actionsBox";
-            actionsBox.Size = new Size(198, 409);
+            actionsBox.Size = new Size(231, 409);
             actionsBox.TabIndex = 0;
             actionsBox.TabStop = false;
             actionsBox.Text = "Actions";
+            // 
+            // PickingButton
+            // 
+            PickingButton.Font = new Font("Segoe UI", 9F);
+            PickingButton.Location = new Point(118, 22);
+            PickingButton.Name = "PickingButton";
+            PickingButton.Size = new Size(106, 26);
+            PickingButton.TabIndex = 1;
+            PickingButton.Text = "Pick Inventory";
+            PickingButton.UseVisualStyleBackColor = true;
+            PickingButton.Click += PickingButton_Click;
             // 
             // insertButton
             // 
@@ -54,7 +67,6 @@
             insertButton.Size = new Size(106, 26);
             insertButton.TabIndex = 0;
             insertButton.Text = "Insert Inventory";
-            insertButton.TextAlign = ContentAlignment.MiddleLeft;
             insertButton.UseVisualStyleBackColor = true;
             insertButton.Click += insertButton_Click;
             // 
@@ -64,7 +76,7 @@
             welcomeLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             welcomeLabel.Location = new Point(12, 9);
             welcomeLabel.Name = "welcomeLabel";
-            welcomeLabel.Size = new Size(60, 15);
+            welcomeLabel.Size = new Size(0, 15);
             welcomeLabel.TabIndex = 1;
             // 
             // MainForm
@@ -76,7 +88,6 @@
             Controls.Add(actionsBox);
             Name = "MainForm";
             Text = "Engineering Inventory";
-            Load += MainForm_Load;
             actionsBox.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -88,5 +99,6 @@
         private GroupBox actionsBox;
         private Button insertButton;
         private Label welcomeLabel;
+        private Button PickingButton;
     }
 }

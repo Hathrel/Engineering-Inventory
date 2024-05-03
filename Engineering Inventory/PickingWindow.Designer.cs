@@ -1,6 +1,6 @@
 ﻿namespace Engineering_Inventory
 {
-    partial class InsertInventory
+    partial class PickingInventory
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            InsertBanner = new Label();
+            PickingBanner = new Label();
             qtyBox = new TextBox();
             partBox = new TextBox();
             locBox = new TextBox();
@@ -37,20 +37,20 @@
             LocationLabel = new Label();
             SubmitButton = new Button();
             CancelButton = new Button();
-            InsertStatus = new Label();
+            PickingStatus = new Label();
             SuspendLayout();
             // 
-            // InsertBanner
+            // PickingBanner
             // 
-            InsertBanner.AutoSize = true;
-            InsertBanner.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
-            InsertBanner.ImageAlign = ContentAlignment.TopCenter;
-            InsertBanner.Location = new Point(-2, 0);
-            InsertBanner.Name = "InsertBanner";
-            InsertBanner.Size = new Size(278, 46);
-            InsertBanner.TabIndex = 0;
-            InsertBanner.Text = "Insert Inventory";
-            InsertBanner.TextAlign = ContentAlignment.TopCenter;
+            PickingBanner.AutoSize = true;
+            PickingBanner.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
+            PickingBanner.ImageAlign = ContentAlignment.TopCenter;
+            PickingBanner.Location = new Point(-2, 0);
+            PickingBanner.Name = "PickingBanner";
+            PickingBanner.Size = new Size(303, 46);
+            PickingBanner.TabIndex = 0;
+            PickingBanner.Text = "Picking Inventory";
+            PickingBanner.TextAlign = ContentAlignment.TopCenter;
             // 
             // qtyBox
             // 
@@ -125,22 +125,22 @@
             CancelButton.UseVisualStyleBackColor = true;
             CancelButton.Click += CancelButton_Click;
             // 
-            // InsertStatus
+            // PickingStatus
             // 
-            InsertStatus.AutoSize = true;
-            InsertStatus.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            InsertStatus.Location = new Point(-2, 46);
-            InsertStatus.Name = "InsertStatus";
-            InsertStatus.Size = new Size(40, 15);
-            InsertStatus.TabIndex = 7;
-            InsertStatus.Text = "label1";
+            PickingStatus.AutoSize = true;
+            PickingStatus.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            PickingStatus.Location = new Point(-2, 46);
+            PickingStatus.Name = "PickingStatus";
+            PickingStatus.Size = new Size(40, 15);
+            PickingStatus.TabIndex = 7;
+            PickingStatus.Text = "label1";
             // 
-            // InsertInventory
+            // PickingInventory
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(281, 227);
-            Controls.Add(InsertStatus);
+            ClientSize = new Size(298, 227);
+            Controls.Add(PickingStatus);
             Controls.Add(CancelButton);
             Controls.Add(SubmitButton);
             Controls.Add(LocationLabel);
@@ -149,16 +149,16 @@
             Controls.Add(locBox);
             Controls.Add(partBox);
             Controls.Add(qtyBox);
-            Controls.Add(InsertBanner);
-            Name = "InsertInventory";
-            Text = "Insert Inventory";
+            Controls.Add(PickingBanner);
+            Name = "PickingInventory";
+            Text = "Picking Inventory";
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private Label InsertBanner;
+        private Label PickingBanner;
         private TextBox qtyBox;
         private TextBox partBox;
         private TextBox locBox;
@@ -167,6 +167,6 @@
         private Label LocationLabel;
         private Button SubmitButton;
         private Button CancelButton;
-        private Label InsertStatus;
+        private Label PickingStatus;
     }
 }
