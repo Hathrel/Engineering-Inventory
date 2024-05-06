@@ -13,7 +13,7 @@ namespace Engineering_Inventory
         }
         private void insertButton_Click(object sender, EventArgs e)
         {
-            if (!Program.insertPermission)
+            if (!Program.editPermission)
             {
                 MessageBox.Show("You don't have permission to do that!");
                 return;
@@ -25,7 +25,7 @@ namespace Engineering_Inventory
 
         private void PickingButton_Click(object sender, EventArgs e)
         {
-            if (!Program.pickingPermission)
+            if (!Program.editPermission)
             {
                 MessageBox.Show("You don't have permission to do that!");
                 return;
@@ -33,6 +33,18 @@ namespace Engineering_Inventory
 
             PickingInventory pickingInventory = new();
             pickingInventory.ShowDialog();
+        }
+
+        private void BinMove_Click(object sender, EventArgs e)
+        {
+            if (!Program.editPermission)
+            {
+                MessageBox.Show("You don't have permission to do that!");
+                return;
+            }
+
+            BinMoveInventory moveInventory = new();
+            moveInventory.ShowDialog();
         }
     }
 }

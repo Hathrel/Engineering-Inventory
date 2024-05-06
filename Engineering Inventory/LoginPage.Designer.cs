@@ -91,7 +91,7 @@
             SiteSelect.Location = new Point(12, 115);
             SiteSelect.Name = "SiteSelect";
             SiteSelect.Size = new Size(100, 23);
-            SiteSelect.TabIndex = 5;
+            SiteSelect.TabIndex = 3;
             SiteSelect.KeyPress += SiteSelect_KeyPress;
             // 
             // SiteLabel
@@ -129,8 +129,6 @@
         private TextBox usernameBox;
         private TextBox passwordBox;
         private Button logInButton;
-        private ComboBox SiteSelection;
-        private Label SiteText;
         private ComboBox SiteSelect;
         private Label SiteLabel;
     }

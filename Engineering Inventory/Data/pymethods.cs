@@ -11,11 +11,8 @@ namespace Engineering_Inventory
         public void InitializePythonEngine()
         {
             // Correctly set the path to the Python DLL
-            //Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
-            Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
-
-            // Set the Python path
-            //Environment.SetEnvironmentVariable("PYTHONPATH", @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\Lib\site-packages");
+            Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
+            //Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
 
             // Initialize Python engine
             PythonEngine.Initialize();
@@ -72,6 +69,9 @@ namespace Engineering_Inventory
                     break;
                 case "Picking":
                     pythonFunc = pythonModule.pick_part;
+                    break;
+                case "Bin_Move":
+                    pythonFunc = pythonModule.move_inventory;
                     break;
             }
             try

@@ -3,6 +3,7 @@ using System.DirectoryServices;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Engineering_Inventory
 {
@@ -10,10 +11,11 @@ namespace Engineering_Inventory
     {
         private static bool terminated = false;
         public static PythonInterop pI;
-        public static bool pickingPermission;
-        public static bool insertPermission;
+        public static bool addPartPermission;
+        public static bool addLocPermission;
         public static bool editPermission;
         public static bool purchasePermission;
+        public static bool admin;
         public static string user_site;
         public static string user_name;
 
@@ -39,10 +41,11 @@ namespace Engineering_Inventory
             {
                 // Store user permissions
                 dynamic userPermissions = loginWindow.user_permissions;
-                Program.pickingPermission = userPermissions["Picking"];
-                Program.insertPermission = userPermissions["Insert"];
+                Program.addPartPermission = userPermissions["Addpart"];
+                Program.addLocPermission = userPermissions["Addloc"];
                 Program.editPermission = userPermissions["Edit"];
                 Program.purchasePermission = userPermissions["Purchase"];
+                Program.admin = userPermissions["Admin"];
 
                 // Create MainForm instance only if login was successful
                 MainForm mainForm = new MainForm();

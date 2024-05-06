@@ -20,12 +20,19 @@ namespace Engineering_Inventory
             string username = usernameBox.Text;
             string password = passwordBox.Text;
             string site = SiteSelect.Text;
-            //string site = SiteSelection.Text;
+
+            // Validate the selected site
+            bool siteIsValid = SiteSelect.Items.Cast<object>().Any(item => item.ToString() == site);
+            if (!siteIsValid)
+            {
+                MessageBox.Show("The selected site is not valid.", "Invalid Site", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;  // Exit the method early
+            }
 
             try
             {
                 // Call DatabaseLogin method from PythonInterop
-                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text))
+                if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
                 {
                     (bool success, string message, dynamic permissions, string loggedInUsername) = Program.pI.DatabaseLogin(username, password, site);
 
@@ -60,6 +67,7 @@ namespace Engineering_Inventory
                 MessageBox.Show("Error during login: " + ex.Message);
             }
         }
+
 
         private void logInButton_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -132,15 +140,18 @@ namespace Engineering_Inventory
 
         private void SiteSelect_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelect.Text))
+            if (e.KeyChar == (char)Keys.Enter)
             {
-                e.Handled = true;
-                logInButton_Click(sender, e);
-            }
-            else
-            {
-                e.Handled = true;
-                SelectNextControl((Control)sender, true, true, true, true);
+                if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelect.Text))
+                {
+                    e.Handled = true;
+                    logInButton_Click(sender, e);
+                }
+                else
+                {
+                    e.Handled = true;
+                    SelectNextControl((Control)sender, true, true, true, true);
+                }
             }
         }
     }

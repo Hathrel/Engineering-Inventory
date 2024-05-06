@@ -32,12 +32,14 @@
             PickingButton = new Button();
             insertButton = new Button();
             welcomeLabel = new Label();
+            BinMove = new Button();
             actionsBox.SuspendLayout();
             SuspendLayout();
             // 
             // actionsBox
             // 
             actionsBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            actionsBox.Controls.Add(BinMove);
             actionsBox.Controls.Add(PickingButton);
             actionsBox.Controls.Add(insertButton);
             actionsBox.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
@@ -79,6 +81,17 @@
             welcomeLabel.Size = new Size(0, 15);
             welcomeLabel.TabIndex = 1;
             // 
+            // BinMove
+            // 
+            BinMove.Font = new Font("Segoe UI", 9F);
+            BinMove.Location = new Point(6, 54);
+            BinMove.Name = "BinMove";
+            BinMove.Size = new Size(106, 26);
+            BinMove.TabIndex = 2;
+            BinMove.Text = "Move Inventory";
+            BinMove.UseVisualStyleBackColor = true;
+            BinMove.Click += BinMove_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -95,10 +108,10 @@
 
         #endregion
 
-        private CheckedListBox checkedListBox1;
         private GroupBox actionsBox;
         private Button insertButton;
         private Label welcomeLabel;
         private Button PickingButton;
+        private Button BinMove;
     }
 }
