@@ -33,6 +33,8 @@
             usernameBox = new TextBox();
             passwordBox = new TextBox();
             logInButton = new Button();
+            SiteSelect = new ComboBox();
+            SiteLabel = new Label();
             SuspendLayout();
             // 
             // usernameText
@@ -73,7 +75,7 @@
             // logInButton
             // 
             logInButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            logInButton.Location = new Point(12, 100);
+            logInButton.Location = new Point(12, 144);
             logInButton.Name = "logInButton";
             logInButton.Size = new Size(100, 32);
             logInButton.TabIndex = 4;
@@ -82,11 +84,32 @@
             logInButton.Click += logInButton_Click;
             logInButton.KeyPress += logInButton_KeyPress;
             // 
+            // SiteSelect
+            // 
+            SiteSelect.FormattingEnabled = true;
+            SiteSelect.Items.AddRange(new object[] { "CVG2", "LEX1", "117", "1305", "1365", "YYZ" });
+            SiteSelect.Location = new Point(12, 115);
+            SiteSelect.Name = "SiteSelect";
+            SiteSelect.Size = new Size(100, 23);
+            SiteSelect.TabIndex = 5;
+            SiteSelect.KeyPress += SiteSelect_KeyPress;
+            // 
+            // SiteLabel
+            // 
+            SiteLabel.AutoSize = true;
+            SiteLabel.Location = new Point(27, 97);
+            SiteLabel.Name = "SiteLabel";
+            SiteLabel.Size = new Size(60, 15);
+            SiteLabel.TabIndex = 6;
+            SiteLabel.Text = "Select Site";
+            // 
             // loginWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(121, 142);
+            ClientSize = new Size(121, 183);
+            Controls.Add(SiteLabel);
+            Controls.Add(SiteSelect);
             Controls.Add(logInButton);
             Controls.Add(passwordBox);
             Controls.Add(usernameBox);
@@ -108,5 +131,7 @@
         private Button logInButton;
         private ComboBox SiteSelection;
         private Label SiteText;
+        private ComboBox SiteSelect;
+        private Label SiteLabel;
     }
 }

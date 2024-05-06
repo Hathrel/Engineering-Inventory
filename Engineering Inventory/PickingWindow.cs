@@ -2,14 +2,10 @@
 {
     public partial class PickingInventory : Form
     {
-        private readonly PythonInterop pI;
-        bool app_permisson;
-        public PickingInventory(bool permission, PythonInterop pythonInterop)
+        public PickingInventory()
         {
-            pI = pythonInterop;
-            permission = app_permisson;
             InitializeComponent();
-            PickingStatus.Text = $"Hello {Program.user_name}, you are working in SITEHERE";
+            PickingStatus.Text = $"Hello {Program.user_name}, you are working in {Program.user_site}";
         }
 
         private void SubmitButton_Click(object sender, EventArgs e)
@@ -20,7 +16,7 @@
                 string qty = qtyBox.Text;
                 string location = locBox.Text;
 
-                bool result = pI.EditInventory(part_number, qty, location, "Picking");
+                bool result = Program.pI.EditInventory(part_number, qty, location, "Picking");
                 if (result)
                 {
                     MessageBox.Show("Part updated successfully.");

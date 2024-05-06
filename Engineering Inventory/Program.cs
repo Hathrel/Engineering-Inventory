@@ -9,11 +9,12 @@ namespace Engineering_Inventory
     internal static class Program
     {
         private static bool terminated = false;
-        private static PythonInterop pI;
+        public static PythonInterop pI;
         public static bool pickingPermission;
         public static bool insertPermission;
         public static bool editPermission;
         public static bool purchasePermission;
+        public static string user_site;
         public static string user_name;
 
         [STAThread]
@@ -36,11 +37,15 @@ namespace Engineering_Inventory
             // Check if login was successful
             if (loginWindow.loginSuccess)
             {
-        // Store user permissions
-        dynamic userPermissions = loginWindow.user_permissions;
+                // Store user permissions
+                dynamic userPermissions = loginWindow.user_permissions;
+                Program.pickingPermission = userPermissions["Picking"];
+                Program.insertPermission = userPermissions["Insert"];
+                Program.editPermission = userPermissions["Edit"];
+                Program.purchasePermission = userPermissions["Purchase"];
 
                 // Create MainForm instance only if login was successful
-                MainForm mainForm = new MainForm(pI, userPermissions, user_name);
+                MainForm mainForm = new MainForm();
                 Application.Run(mainForm);
 
 

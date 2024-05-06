@@ -1,23 +1,15 @@
-﻿namespace Engineering_Inventory
+﻿using System.Runtime.InteropServices;
+
+namespace Engineering_Inventory
 {
     // MainForm.cs
     public partial class MainForm : Form
     {
-        private readonly PythonInterop pI;
-
-        public MainForm(PythonInterop pythonInterop, dynamic permissions, string user_name)
+        public MainForm()
         {
-            pI = pythonInterop;
             InitializeComponent();
-            string username = user_name;
 
-            // Parse permissions
-            Program.pickingPermission = permissions["Picking"];
-            Program.insertPermission = permissions["Insert"];
-            Program.editPermission = permissions["Edit"];
-            Program.purchasePermission = permissions["Purchase"];
-
-            welcomeLabel.Text = $"Welcome {username}, you are working in SITEHERE";
+            welcomeLabel.Text = $"Welcome {Program.user_name}, you are working in {Program.user_site}";
         }
         private void insertButton_Click(object sender, EventArgs e)
         {
@@ -27,7 +19,7 @@
                 return;
             }
 
-            InsertInventory insertInventory = new(Program.insertPermission, pI);
+            InsertInventory insertInventory = new();
             insertInventory.ShowDialog();
         }
 
@@ -39,7 +31,7 @@
                 return;
             }
 
-            PickingInventory pickingInventory = new(Program.pickingPermission, pI);
+            PickingInventory pickingInventory = new();
             pickingInventory.ShowDialog();
         }
     }

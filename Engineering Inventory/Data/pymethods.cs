@@ -11,8 +11,8 @@ namespace Engineering_Inventory
         public void InitializePythonEngine()
         {
             // Correctly set the path to the Python DLL
-            Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
-            //Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
+            //Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
+            Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
 
             // Set the Python path
             //Environment.SetEnvironmentVariable("PYTHONPATH", @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\Lib\site-packages");
@@ -34,17 +34,18 @@ namespace Engineering_Inventory
             PythonEngine.Shutdown();
         }
 
-        public (bool, string, dynamic, string) DatabaseLogin(string username, string password)
+        public (bool, string, dynamic, string) DatabaseLogin(string username, string password, string site)
         {
             try
             {
                 // Call Python function
-                dynamic result = pythonModule.database_login(username, password);
+                dynamic result = pythonModule.database_login(username, password, site);
 
                 // Extract result components
                 bool success = result[0];
                 string message = result[1];
                 dynamic permissions = result[2];
+                Program.user_site = site;
 
                 return (success, message, permissions, username);
             }

@@ -1,10 +1,8 @@
 import pyodbc as db
 from datetime import datetime
 
-#TODO: All inventory actions. When picking is established, make sure you delete relationship references with the location is zeroed out for that part.
-
-user_name = ""
-user_site = None #TODO: Add a dropdown in the login screen to select site, this will allow this app to scale
+global user_name
+global user_site
 
 class QuantityException(Exception):
     def __init__(self):
@@ -14,11 +12,14 @@ class PartException(Exception):
     def __init__(self):
         self.message = "That part number does not exist in this location."
     
-def database_login(username, password):
+def database_login(username, password, site):
     with open_database_connection() as conn, conn.cursor() as cursor:
         if not conn:
             return (False, "Failed to connect to the database.", {})
-
+        global user_name
+        user_name = username
+        global user_site
+        user_site = site
         try:
             sql_command = """
             SELECT [Password], [Pick_Permit], [Insert_Permit], [Edit_Permit], [Purchase_Permit] 
@@ -48,7 +49,7 @@ def database_login(username, password):
             return (False, "Sorry, there was an error with the database. Please try again.", {})
 
 def open_database_connection():
-    db_path = r"C:/Users/dboyer/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
+    db_path = r"C:/Users/Derek/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
     connection_string = fr"DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={db_path};"
     try:
         connection = db.connect(connection_string)
@@ -70,32 +71,33 @@ def insert_part(*args):
     part_number = args[0]
     qty = args[1]
     location = args[2]
+    site = user_site
     
     with open_database_connection() as conn, conn.cursor() as cursor:
-        if not query_table(cursor, "Part_Location_Rel"):
-            cursor.execute("CREATE TABLE Part_Location_Rel (Part_ID INT, Location_ID INT, Location_Qty INT)")
+        if not query_table(cursor, f"{site}_Part_Location_Rel"):
+            cursor.execute(f"CREATE TABLE {site}_Part_Location_Rel (Part_ID INT, Location_ID INT, Location_Qty INT)")
             conn.commit()
 
         cursor.execute("SELECT Part_ID FROM Part_List WHERE Part_Number = ?", (part_number.upper(),))
         part_id = cursor.fetchone()
 
-        cursor.execute("SELECT Location_ID FROM Locations_CVG2 WHERE Location = ?", (location.upper(),))
+        cursor.execute(f"SELECT Location_ID FROM Locations_{site} WHERE Location = ?", (location.upper(),))
         location_id = cursor.fetchone()
 
         if part_id and location_id:
             part_id = part_id[0]
             location_id = location_id[0]
             
-            cursor.execute("SELECT Location_Qty FROM Part_Location_Rel WHERE Part_ID = ? AND Location_ID = ?", (part_id, location_id))
+            cursor.execute(f"SELECT Location_Qty FROM {site}_Part_Location_Rel WHERE Part_ID = ? AND Location_ID = ?", (part_id, location_id))
             rel = cursor.fetchone()
             if rel:
                 new_location_qty = rel[0] + int(qty)
-                cursor.execute("UPDATE Part_Location_Rel SET Location_Qty = ? WHERE Part_ID = ? AND Location_ID = ?", (new_location_qty, part_id, location_id))
+                cursor.execute(f"UPDATE {site}_Part_Location_Rel SET Location_Qty = ? WHERE Part_ID = ? AND Location_ID = ?", (new_location_qty, part_id, location_id))
             else:
                 new_location_qty = int(qty)
-                cursor.execute("INSERT INTO Part_Location_Rel (Part_ID, Location_ID, Location_Qty) VALUES (?, ?, ?)", (part_id, location_id, int(qty)))
+                cursor.execute(f"INSERT INTO {site}_Part_Location_Rel (Part_ID, Location_ID, Location_Qty) VALUES (?, ?, ?)", (part_id, location_id, int(qty)))
 
-            cursor.execute("SELECT CVG2_On_Hand_Balance FROM Part_List WHERE Part_ID = ?", (part_id,))
+            cursor.execute(f"SELECT {site}_On_Hand_Balance FROM Part_List WHERE Part_ID = ?", (part_id,))
             q_balance = cursor.fetchone()[0]
             if q_balance is None:
                 current_balance = 0
@@ -103,9 +105,9 @@ def insert_part(*args):
                 current_balance = q_balance
 
             new_balance = current_balance + int(qty)
-            cursor.execute("UPDATE Part_List SET CVG2_On_Hand_Balance = ? WHERE Part_ID = ?", (new_balance, part_id))
+            cursor.execute(f"UPDATE Part_List SET {site}_On_Hand_Balance = ? WHERE Part_ID = ?", (new_balance, part_id))
             conn.commit()
-            log_transaction(part_id,location_id, location_id, qty, new_location_qty, new_balance, "Insert")
+            log_transaction(part_id,location_id, location_id, int(qty), new_location_qty, new_balance, "Insert")
             return True
         else:
             return False, "Part or location does not exist"
@@ -114,63 +116,72 @@ def pick_part(*args):
     part_number = args[0]
     qty = args[1]
     location = args[2]
-            
-    # Open a database connection
+    site = user_site
+    
     with open_database_connection() as conn, conn.cursor() as cursor:
+
+        cursor.execute("SELECT Part_ID FROM Part_List WHERE Part_Number = ?", (part_number.upper(),))
+        part_id = cursor.fetchone()
+
+        cursor.execute(f"SELECT Location_ID FROM Locations_{site} WHERE Location = ?", (location.upper(),))
+        location_id = cursor.fetchone()
+
+        if part_id and location_id:
+            part_id = part_id[0]
+            location_id = location_id[0]
     
-        try:
-            # Check if the part and location exist
-            part_exists = cursor.execute("SELECT Part_ID FROM Part_List WHERE Part_Number = ?", (part_number.upper(),)).fetchone()
-            location_exists = cursor.execute("SELECT Location_ID FROM Locations_CVG2 WHERE Location = ?", (location.upper(),)).fetchone()
-            if not (part_exists and location_exists):
-                raise PartException("Part or location does not exist.")
-
-            part_id = part_exists[0]
-            location_id = location_exists[0]
-
-            # Check if the relationship already exists
-            existing_relationship = cursor.execute("SELECT * FROM Part_Location_Rel WHERE Part_ID = ? AND Location_ID = ?", (part_id, location_id)).fetchone()
-            if existing_relationship:
-                # If the relationship already exists, update the quantity
-                present_qty = existing_relationship[2]  # Third column is Location_Qty
-                new_qty = present_qty - qty
-                if new_qty < 0:
-                    raise QuantityException("Not enough quantity in location to complete this transaction.")
+            cursor.execute(f"SELECT Location_Qty FROM {site}_Part_Location_Rel WHERE Part_ID = ? AND Location_ID = ?", (part_id, location_id))
+            rel = cursor.fetchone()
+            if rel:
+                new_location_qty = rel[0] - int(qty)
+                if new_location_qty < 0:
+                    raise QuantityException("Not enough of this part in location.")
+                elif new_location_qty > 0:
+                    cursor.execute(f"UPDATE {site}_Part_Location_Rel SET Location_Qty = ? WHERE Part_ID = ? AND Location_ID = ?", (new_location_qty, part_id, location_id))
                 else:
-                    cursor.execute("UPDATE Part_Location_Rel SET Location_Qty = ? WHERE Part_ID = ? AND Location_ID = ?", (new_qty, part_id, location_id))
-
-                    # Update theCVG2_On_Hand_Balance in Part_List
-                    current_balance = cursor.execute("SELECT CVG2_On_Hand_Balance FROM Part_List WHERE Part_ID = ?", (part_id,)).fetchone()
-                    current_balance = current_balance[0] if current_balance is not None else 0
-                    new_balance = current_balance - qty
-                    cursor.execute("UPDATE Part_List SET CVG2_On_Hand_Balance = ? WHERE Part_ID = ?", (new_balance, part_id))
-
-                    log_transaction(connection, part_id, location_id, location_id, qty, new_qty, "Picking")
-            
-                    conn.commit()
+                    cursor.execute(f"DELETE FROM {site}_Part_Location_Rel WHERE Part_ID = ? AND Location_ID = ?", (part_id, location_id))
             else:
-                raise PartException("Part-location relationship does not exist.")
+                raise PartException("That part doesn't exist in this location.")
 
+
+            cursor.execute(f"SELECT {site}_On_Hand_Balance FROM Part_List WHERE Part_ID = ?", (part_id,))
+            q_balance = cursor.fetchone()[0]
+            if q_balance is None:
+                current_balance = 0
+            else:
+                current_balance = q_balance
+
+            new_balance = current_balance - int(qty)
+            cursor.execute(f"UPDATE Part_List SET {site}_On_Hand_Balance = ? WHERE Part_ID = ?", (new_balance, part_id))
+            conn.commit()
+            log_transaction(part_id,location_id, location_id, int(qty), new_location_qty, new_balance, "Picking")
             return True
-    
-        except PartException as e:
-            return False, str(e)
-    
-        except QuantityException as e:
-            return False, str(e)
-    
-        except Exception as e:
-            # Handle other exceptions
-            return False, f"Error inserting/updating part-location relationship: {e}"
+        else:
+            return False, "Part or location does not exist"
 
 def log_transaction(part_number, old_location, new_location, transaction_qty, new_qty, total_qty, module):
     with open_database_connection() as conn, conn.cursor() as cursor:
         date = datetime.now()
         username = user_name
         site = user_site
+        primary_key = str(f"{date}{part_number}{old_location}")
 
         if not query_table(cursor, "Transaction_Logs"):
-            cursor.execute("CREATE TABLE Transaction_Logs (Part_ID INT, Old_Location_ID INT, New_Location_ID INT, Transaction_Quantity INT, New_Quantity INT, Total_Quantity INT, User_Name VARCHAR(255), Site VARCHAR(255), Module VARCHAR(255), Transaction_Date DATE, PRIMARY KEY (Part_ID, Transaction_Date))")
+            cursor.execute("""
+            CREATE TABLE Transaction_Logs (
+                Part_ID INT, 
+                Old_Location_ID INT, 
+                New_Location_ID INT, 
+                Transaction_Quantity INT, 
+                New_Quantity INT, 
+                Total_Quantity INT, 
+                User_Name VARCHAR(255), 
+                Site VARCHAR(255), 
+                Module VARCHAR(255), 
+                Transaction_Date DATE, 
+                Tran_ID VARCHAR(255) PRIMARY KEY
+                                                )
+                                            """)
 
         if module == "Picking":
             transaction_qty *= -1
@@ -181,7 +192,5 @@ def log_transaction(part_number, old_location, new_location, transaction_qty, ne
         else:
             total_qty = None
 
-        cursor.execute("INSERT INTO Transaction_Logs (Part_ID, Old_Location_ID, New_Location_ID, Transaction_Quantity, New_Quantity, Total_Quantity, User_Name, Site, Module, Transaction_Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (part_number, old_location, new_location, transaction_qty, new_qty, total_qty, username, site, module, date))
+        cursor.execute("INSERT INTO Transaction_Logs (Part_ID, Old_Location_ID, New_Location_ID, Transaction_Quantity, New_Quantity, Total_Quantity, User_Name, Site, Module, Transaction_Date, Tran_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (part_number, old_location, new_location, transaction_qty, new_qty, total_qty, username, site, module, date, primary_key))
         conn.commit()
-
-print(insert_part("ENG000111","100", "ER1-A2"))
