@@ -7,11 +7,11 @@ global user_site
 class QuantityException(Exception):
     def __init__(self):
         self.message = "Not enough in location to complete this tranasaction"
-        
+
 class PartException(Exception):
     def __init__(self):
         self.message = "That part number does not exist in this location."
-    
+
 def database_login(username, password, site):
     with open_database_connection() as conn, conn.cursor() as cursor:
         if not conn:
@@ -19,7 +19,7 @@ def database_login(username, password, site):
         global user_name
         user_name = username
         global user_site
-        user_site = site
+        user_site = site.upper()
 
         try:
             sql_command = f"""
@@ -57,7 +57,7 @@ def database_login(username, password, site):
             return (False, "Sorry, there was an error with the database. Please try again.", {})
 
 def open_database_connection():
-    db_path = r"C:/Users/Derek/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
+    db_path = r"C:/Users/dboyer/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
     connection_string = fr"DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={db_path};"
     try:
         connection = db.connect(connection_string)
@@ -175,7 +175,7 @@ def pick_part(*args):
             return True
         else:
             return False, "Part or location does not exist"
-        
+
 def move_inventory(*args):
     part_number = args[0]
     qty = args[1]
@@ -242,8 +242,7 @@ def display_cycle_count(location):
                         INNER JOIN {user_site}_Part_Location_Rel ON Part_List.Part_ID = {user_site}_Part_Location_Rel.Part_ID) 
                         INNER JOIN Locations_{user_site} ON {user_site}_Part_Location_Rel.Location_ID = Locations_{user_site}.Location_ID
                         WHERE Locations_{user_site}.Location = ?;
-                       """, (location,))
-        
+                       """, (location.upper(),))    
         for row in cursor.fetchall():
             part_number, quantity, description = row
             data_packet.append({
@@ -251,11 +250,42 @@ def display_cycle_count(location):
                 'Quantity': quantity,
                 'Description': description
             })
-    
     return data_packet
 
+def submit_cycle_count(location, part, qty):
+    date = datetime.now()
+    user = user_name
+    site = user_site
 
+    with open_database_connection() as conn, conn.cursor() as cursor:
+        try:
+            cursor.execute("SELECT Part_ID FROM Part_List WHERE Part_Number = ?", (part.upper(),))
+            part_id = cursor.fetchone()
+            if not part_id:
+                raise IndexError("Part number not found")
+            part_id = part_id[0]
+
+            cursor.execute(f"SELECT Location_ID FROM Locations_{site} WHERE Location = ?", (location.upper(),))
+            location_id = cursor.fetchone()
+            if not location_id:
+                raise IndexError("Location not found")
+            location_id = location_id[0]
             
+            cursor.execute(f"SELECT Location_Qty FROM {site}_Part_Location_Rel WHERE Part_ID = ? AND Location_ID = ?", (part_id, location_id))
+            location_balance = cursor.fetchone()[0]
+
+            cursor.execute("INSERT INTO Cycle_Counts (Part_ID, Location_ID, Qty, Count_Date, Username, Site, Location_Balance) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            (part_id, location_id, int(qty), date, user, site, location_balance))
+            conn.commit()
+            return True, "Cycle Count successfully submitted."
+        except IndexError as e:
+            logging.error(f"IndexError: {str(e)}")
+            return False, str(e)
+        except Exception as e:
+            logging.error(f"Exception: {str(e)}")
+            return False, f"An error occurred: {str(e)}"
+
+
 def log_transaction(part_number, old_location, new_location, transaction_qty, new_qty, total_qty, module):
     with open_database_connection() as conn, conn.cursor() as cursor:
         date = datetime.now()
@@ -292,4 +322,3 @@ def log_transaction(part_number, old_location, new_location, transaction_qty, ne
 
         cursor.execute("INSERT INTO Transaction_Logs (Part_ID, Old_Location_ID, New_Location_ID, Transaction_Quantity, New_Quantity, Total_Quantity, User_Name, Site, Module, Transaction_Date, Tran_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (part_number, old_location, new_location, transaction_qty, new_qty, total_qty, username, site, module, date, primary_key))
         conn.commit()
-        

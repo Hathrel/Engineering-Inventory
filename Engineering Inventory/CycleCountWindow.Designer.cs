@@ -35,6 +35,8 @@
             LocationBox = new TextBox();
             LocationLabel = new Label();
             PartsBox = new Panel();
+            SubmitQuantityButton = new Button();
+            FoundButton = new Button();
             SuspendLayout();
             // 
             // CycleCountBanner
@@ -104,12 +106,36 @@
             PartsBox.Size = new Size(453, 300);
             PartsBox.TabIndex = 7;
             // 
+            // SubmitQuantityButton
+            // 
+            SubmitQuantityButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            SubmitQuantityButton.Location = new Point(356, 109);
+            SubmitQuantityButton.Name = "SubmitQuantityButton";
+            SubmitQuantityButton.Size = new Size(106, 23);
+            SubmitQuantityButton.TabIndex = 8;
+            SubmitQuantityButton.Text = "Submit Counts";
+            SubmitQuantityButton.UseVisualStyleBackColor = true;
+            SubmitQuantityButton.Click += SubmitQuantityButton_Click;
+            // 
+            // FoundButton
+            // 
+            FoundButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            FoundButton.Location = new Point(243, 109);
+            FoundButton.Name = "FoundButton";
+            FoundButton.Size = new Size(107, 23);
+            FoundButton.TabIndex = 9;
+            FoundButton.Text = "Found Inventory";
+            FoundButton.UseVisualStyleBackColor = true;
+            FoundButton.Click += FoundButton_Click;
+            // 
             // CycleCounts
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             ClientSize = new Size(474, 450);
+            Controls.Add(FoundButton);
+            Controls.Add(SubmitQuantityButton);
             Controls.Add(PartsBox);
             Controls.Add(LocationLabel);
             Controls.Add(LocationBox);
@@ -119,6 +145,7 @@
             Controls.Add(CycleCountBanner);
             Name = "CycleCounts";
             Text = "Cycle Counts";
+            Load += CycleCounts_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -132,5 +159,7 @@
         private TextBox LocationBox;
         private Label LocationLabel;
         private Panel PartsBox;
+        private Button SubmitQuantityButton;
+        private Button FoundButton;
     }
 }
