@@ -57,7 +57,7 @@ def database_login(username, password, site):
             return (False, "Sorry, there was an error with the database. Please try again.", {})
 
 def open_database_connection():
-    db_path = r"C:/Users/dboyer/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
+    db_path = r"C:/Users/Derek/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
     connection_string = fr"DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={db_path};"
     try:
         connection = db.connect(connection_string)
@@ -79,7 +79,7 @@ def insert_part(*args):
     part_number = args[0]
     qty = args[1]
     location = args[2]
-    site = "CVG2"#user_site
+    site = user_site
     
     with open_database_connection() as conn, conn.cursor() as cursor:
         if not query_table(cursor, f"{site}_Part_Location_Rel"):
@@ -233,14 +233,34 @@ def move_inventory(*args):
             else:
                 return False, "Part or Location doesn't exist."
 
-def cycle_count(location):
-    pass
+def display_cycle_count(location):
+    data_packet = []
+    with open_database_connection() as conn, conn.cursor() as cursor:
+        cursor.execute(f"""
+                        SELECT Part_List.Part_Number, {user_site}_Part_Location_Rel.Location_Qty, Part_List.Part_Description
+                        FROM (Part_List 
+                        INNER JOIN {user_site}_Part_Location_Rel ON Part_List.Part_ID = {user_site}_Part_Location_Rel.Part_ID) 
+                        INNER JOIN Locations_{user_site} ON {user_site}_Part_Location_Rel.Location_ID = Locations_{user_site}.Location_ID
+                        WHERE Locations_{user_site}.Location = ?;
+                       """, (location,))
+        
+        for row in cursor.fetchall():
+            part_number, quantity, description = row
+            data_packet.append({
+                'Part Number': part_number,
+                'Quantity': quantity,
+                'Description': description
+            })
+    
+    return data_packet
+
+
             
 def log_transaction(part_number, old_location, new_location, transaction_qty, new_qty, total_qty, module):
     with open_database_connection() as conn, conn.cursor() as cursor:
         date = datetime.now()
-        username = "dboyer"#user_name
-        site = "CVG2"#user_site.upper()
+        username = user_name
+        site = user_site.upper()
         primary_key = str(f"{date}{part_number}{old_location}")
 
         if not query_table(cursor, "Transaction_Logs"):
@@ -272,3 +292,4 @@ def log_transaction(part_number, old_location, new_location, transaction_qty, ne
 
         cursor.execute("INSERT INTO Transaction_Logs (Part_ID, Old_Location_ID, New_Location_ID, Transaction_Quantity, New_Quantity, Total_Quantity, User_Name, Site, Module, Transaction_Date, Tran_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (part_number, old_location, new_location, transaction_qty, new_qty, total_qty, username, site, module, date, primary_key))
         conn.commit()
+        

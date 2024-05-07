@@ -11,8 +11,8 @@ namespace Engineering_Inventory
         public void InitializePythonEngine()
         {
             // Correctly set the path to the Python DLL
-            Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
-            //Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
+            //Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
+            Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
 
             // Initialize Python engine
             PythonEngine.Initialize();
@@ -50,8 +50,6 @@ namespace Engineering_Inventory
             {
                 // Handle Python exception
                 // Log or display the exception details
-                Console.WriteLine($"Python Exception: {ex.Message}");
-                Console.WriteLine($"Python Traceback: {ex.Traceback}");
                 string errorString = $"Python error occurred: {ex.Message}\n Stack Trace: {ex.Traceback}";
 
                 // Return detailed error message
@@ -107,6 +105,30 @@ namespace Engineering_Inventory
                 return false;
             }
         }
+
+        public List<(string, int, string)> CycleCountPull(string location)
+        {
+            try
+            {
+                dynamic result = pythonModule.display_cycle_count(location);
+                List<(string, int, string)> dataPacket = new List<(string, int, string)>();
+
+                foreach (dynamic partData in result)
+                {
+                    string partNumber = partData["Part Number"];
+                    int qty = partData["Quantity"];
+                    string desc = partData["Description"];
+                    dataPacket.Add((partNumber, qty, desc));
+                }
+                return dataPacket;
+            }
+            catch (PythonException ex)
+            {
+                MessageBox.Show($"Python error occurred: {ex.Message}\n Stack Trace: {ex.Traceback}");
+                return new List<(string, int, string)>();
+            }
+        }
+
     }
 }
 

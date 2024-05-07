@@ -46,6 +46,18 @@ namespace Engineering_Inventory
             BinMoveInventory moveInventory = new();
             moveInventory.ShowDialog();
         }
+
+        private void CycleCount_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (!Program.editPermission)
+            {
+                MessageBox.Show("You don't have permission to do that!");
+                return;
+            }
+
+            CycleCounts cycleCount = new();
+            cycleCount.ShowDialog();
+        }
     }
 }
 

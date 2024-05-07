@@ -29,16 +29,18 @@
         private void InitializeComponent()
         {
             actionsBox = new GroupBox();
+            CycleCount = new Button();
+            BinMove = new Button();
             PickingButton = new Button();
             insertButton = new Button();
             welcomeLabel = new Label();
-            BinMove = new Button();
             actionsBox.SuspendLayout();
             SuspendLayout();
             // 
             // actionsBox
             // 
             actionsBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            actionsBox.Controls.Add(CycleCount);
             actionsBox.Controls.Add(BinMove);
             actionsBox.Controls.Add(PickingButton);
             actionsBox.Controls.Add(insertButton);
@@ -49,6 +51,28 @@
             actionsBox.TabIndex = 0;
             actionsBox.TabStop = false;
             actionsBox.Text = "Actions";
+            // 
+            // CycleCount
+            // 
+            CycleCount.Font = new Font("Segoe UI", 9F);
+            CycleCount.Location = new Point(119, 54);
+            CycleCount.Name = "CycleCount";
+            CycleCount.Size = new Size(106, 26);
+            CycleCount.TabIndex = 3;
+            CycleCount.Text = "Cycle Counts";
+            CycleCount.UseVisualStyleBackColor = true;
+            CycleCount.MouseClick += CycleCount_MouseClick;
+            // 
+            // BinMove
+            // 
+            BinMove.Font = new Font("Segoe UI", 9F);
+            BinMove.Location = new Point(6, 54);
+            BinMove.Name = "BinMove";
+            BinMove.Size = new Size(106, 26);
+            BinMove.TabIndex = 2;
+            BinMove.Text = "Move Inventory";
+            BinMove.UseVisualStyleBackColor = true;
+            BinMove.Click += BinMove_Click;
             // 
             // PickingButton
             // 
@@ -81,17 +105,6 @@
             welcomeLabel.Size = new Size(0, 15);
             welcomeLabel.TabIndex = 1;
             // 
-            // BinMove
-            // 
-            BinMove.Font = new Font("Segoe UI", 9F);
-            BinMove.Location = new Point(6, 54);
-            BinMove.Name = "BinMove";
-            BinMove.Size = new Size(106, 26);
-            BinMove.TabIndex = 2;
-            BinMove.Text = "Move Inventory";
-            BinMove.UseVisualStyleBackColor = true;
-            BinMove.Click += BinMove_Click;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -113,5 +126,6 @@
         private Label welcomeLabel;
         private Button PickingButton;
         private Button BinMove;
+        private Button CycleCount;
     }
 }
