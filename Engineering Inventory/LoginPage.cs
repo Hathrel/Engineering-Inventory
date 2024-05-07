@@ -19,7 +19,7 @@ namespace Engineering_Inventory
         {
             string username = usernameBox.Text;
             string password = passwordBox.Text;
-            string site = SiteSelect.Text;
+            string site = SiteSelect.Text.ToUpper();
 
             // Validate the selected site
             bool siteIsValid = SiteSelect.Items.Cast<object>().Any(item => item.ToString() == site);

@@ -29,6 +29,7 @@ namespace Engineering_Inventory
             if (!string.IsNullOrEmpty(location))
             {
                 List<(string partNumber, int quantity, string description)> parts = Program.pI.CycleCountPull(location);
+
                 // Clear existing controls in PartsBox
                 PartsBox.Controls.Clear();
 
@@ -45,6 +46,7 @@ namespace Engineering_Inventory
                     // Create text box for quantity
                     TextBox quantityTextBox = new TextBox();
                     quantityTextBox.Location = new Point(150, yPos);
+                    quantityTextBox.Tag = part.partNumber; // Associate the TextBox with the part number
                     PartsBox.Controls.Add(quantityTextBox);
                     int actualQty = part.quantity;
 
@@ -58,14 +60,63 @@ namespace Engineering_Inventory
                     yPos += 30; // Increment y-position for next control
                 }
 
-                // Resize the form to fit the controls
-                int formHeight = PartsBox.Controls.Count * 30 + 200; // Calculate form height based on number of controls
-                this.ClientSize = new Size(this.ClientSize.Width, formHeight);
+                // Show SubmitQuantityButton
+                SubmitQuantityButton.Visible = true;
+
+                // Pass location and parts data to SubmitQuantityButton Click event handler
+                List<(string partNumber, int quantity)> partQuantities = parts.Select(p => (p.partNumber, 0)).ToList(); // Initialize quantities as 0
+                SubmitQuantityButton.Tag = Tuple.Create(location, partQuantities);
             }
             else
             {
                 LocationBox.Select();
                 MessageBox.Show("Please enter a location.");
+            }
+        }
+        private void SubmitQuantityButton_Click(object sender, EventArgs e)
+        {
+            string location = LocationBox.Text;  // Assuming LocationBox.Text contains the location data
+            bool overallSuccess = true;
+            string errorMessage = "";
+
+            foreach (Control control in PartsBox.Controls)
+            {
+                if (control is TextBox textBox)
+                {
+                    string partNumber = textBox.Tag as string;
+                    int quantity;
+
+                    if (int.TryParse(textBox.Text, out quantity))
+                    {
+                        // Call the CycleCountSubmit method for each part and quantity
+                        try
+                        {
+                            Program.pI.CycleCountSubmit(location, partNumber, quantity);
+                        }
+                        catch (Exception ex)
+                        {
+                            overallSuccess = false;
+                            errorMessage = $"Error processing part {partNumber}: {ex.Message}";
+                            break;  // Optionally stop processing after the first error
+                        }
+                    }
+                    else
+                    {
+                        overallSuccess = false;
+                        errorMessage = $"Invalid quantity entered for part {partNumber}.";
+                        break;  // Optionally stop processing after the first error
+                    }
+                }
+            }
+
+            // Handle the overall result
+            if (overallSuccess)
+            {
+                MessageBox.Show("All cycle counts successfully submitted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -77,6 +128,16 @@ namespace Engineering_Inventory
                 e.Handled = true;
                 SubmitButton_Click(sender, e);
             }
+        }
+
+        private void CycleCounts_Load(object sender, EventArgs e)
+        {
+            LocationBox.Select();
+        }
+
+        private void FoundButton_Click(object sender, EventArgs e)
+        {
+            AddFound addFound = new(LocationBox.Text);
         }
     }
 }

@@ -11,8 +11,8 @@ namespace Engineering_Inventory
         public void InitializePythonEngine()
         {
             // Correctly set the path to the Python DLL
-            //Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
-            Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
+            Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
+            //Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
 
             // Initialize Python engine
             PythonEngine.Initialize();
@@ -129,6 +129,10 @@ namespace Engineering_Inventory
             }
         }
 
+        public void CycleCountSubmit(string location, string part, int qty)
+        {
+            pythonModule.submit_cycle_count(location, part, qty);
+        }
     }
 }
 
