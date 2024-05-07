@@ -12,17 +12,27 @@ namespace Engineering_Inventory
 {
     public partial class AddFound : Form
     {
+        private string partLocation;
         public AddFound(string location)
         {
+            this.partLocation = location.ToUpper();
             InitializeComponent();
-            AddFoundStatus.Text = $"Found inventory in {location}";
+            AddFoundStatus.Text = $"Found inventory in {partLocation}";
         }
 
         private void PartBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if(e.KeyChar == (char)Keys.Enter)
             {
-                e.Handled = true;
+                if (!string.IsNullOrEmpty(QtyBox.Text) && !string.IsNullOrEmpty(PartBox.Text))
+                {
+                    SubmitButton_Click(sender, e);
+                }
+                else
+                {
+                    e.Handled = true;
+                    SelectNextControl((Control)sender, true, true, true, true);
+                }
             }
         }
 
@@ -30,7 +40,15 @@ namespace Engineering_Inventory
         {
             if (e.KeyChar == (char)Keys.Enter)
             {
-                e.Handled = true;
+                if (!string.IsNullOrEmpty(QtyBox.Text) && !string.IsNullOrEmpty(PartBox.Text))
+                {
+                    SubmitButton_Click(sender, e);
+                }
+                else
+                {
+                    e.Handled = true;
+                    SelectNextControl((Control)sender, true, true, true, true);
+                }
             }
         }
 
@@ -38,7 +56,22 @@ namespace Engineering_Inventory
         {
             if (!string.IsNullOrEmpty(QtyBox.Text) && !string.IsNullOrEmpty(PartBox.Text))
             {
-
+                string part = PartBox.Text;
+                int qty = int.Parse(QtyBox.Text);
+                Program.pI.CycleCountSubmit(partLocation, part, qty);
+                if (AddMoreBox.Checked == true)
+                {
+                    PartBox.Text = "";
+                    QtyBox.Text = "";
+                }
+                else
+                {
+                    this.Close();
+                }
+            }
+            else
+            {
+                SelectNextControl((Control)sender, true, true, true, true);
             }
         }
 

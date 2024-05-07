@@ -1,3 +1,5 @@
+using Microsoft.VisualBasic.ApplicationServices;
+
 namespace Engineering_Inventory
 {
     // loginWindow.cs
@@ -153,6 +155,11 @@ namespace Engineering_Inventory
                     SelectNextControl((Control)sender, true, true, true, true);
                 }
             }
+        }
+
+        public static bool IsFormOpen<T>() where T : Form
+        {
+            return Application.OpenForms.OfType<T>().Any();
         }
     }
 }

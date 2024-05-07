@@ -116,7 +116,7 @@
             Controls.Add(AddFoundStatus);
             Controls.Add(AddFoundBanner);
             Name = "AddFound";
-            Text = "Form1";
+            Text = "Add Found";
             ResumeLayout(false);
             PerformLayout();
         }

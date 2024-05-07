@@ -57,7 +57,7 @@ def database_login(username, password, site):
             return (False, "Sorry, there was an error with the database. Please try again.", {})
 
 def open_database_connection():
-    db_path = r"C:/Users/dboyer/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
+    db_path = r"C:/Users/Derek/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
     connection_string = fr"DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={db_path};"
     try:
         connection = db.connect(connection_string)
@@ -272,17 +272,19 @@ def submit_cycle_count(location, part, qty):
             location_id = location_id[0]
             
             cursor.execute(f"SELECT Location_Qty FROM {site}_Part_Location_Rel WHERE Part_ID = ? AND Location_ID = ?", (part_id, location_id))
-            location_balance = cursor.fetchone()[0]
+            location_balance = cursor.fetchone()
+            if not location_balance:
+                loc_balance = 0
+            else:
+                loc_balance = location_balance[0]
 
             cursor.execute("INSERT INTO Cycle_Counts (Part_ID, Location_ID, Qty, Count_Date, Username, Site, Location_Balance) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                            (part_id, location_id, int(qty), date, user, site, location_balance))
+                            (part_id, location_id, int(qty), date, user, site, loc_balance))
             conn.commit()
             return True, "Cycle Count successfully submitted."
         except IndexError as e:
-            logging.error(f"IndexError: {str(e)}")
             return False, str(e)
         except Exception as e:
-            logging.error(f"Exception: {str(e)}")
             return False, f"An error occurred: {str(e)}"
 
 

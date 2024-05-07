@@ -56,7 +56,7 @@
             CycleCountStatus.Location = new Point(12, 46);
             CycleCountStatus.Name = "CycleCountStatus";
             CycleCountStatus.Size = new Size(40, 15);
-            CycleCountStatus.TabIndex = 1;
+            CycleCountStatus.TabIndex = 0;
             CycleCountStatus.Text = "label1";
             // 
             // SubmitButton
@@ -65,7 +65,7 @@
             SubmitButton.Location = new Point(12, 109);
             SubmitButton.Name = "SubmitButton";
             SubmitButton.Size = new Size(75, 23);
-            SubmitButton.TabIndex = 3;
+            SubmitButton.TabIndex = 2;
             SubmitButton.Text = "Submit";
             SubmitButton.UseVisualStyleBackColor = true;
             SubmitButton.Click += SubmitButton_Click;
@@ -76,7 +76,7 @@
             CancelButton.Location = new Point(93, 109);
             CancelButton.Name = "CancelButton";
             CancelButton.Size = new Size(75, 23);
-            CancelButton.TabIndex = 4;
+            CancelButton.TabIndex = 3;
             CancelButton.Text = "Cancel";
             CancelButton.UseVisualStyleBackColor = true;
             CancelButton.Click += CancelButton_Click;
@@ -86,7 +86,7 @@
             LocationBox.Location = new Point(12, 80);
             LocationBox.Name = "LocationBox";
             LocationBox.Size = new Size(155, 23);
-            LocationBox.TabIndex = 5;
+            LocationBox.TabIndex = 1;
             LocationBox.KeyPress += LocationBox_KeyPress;
             // 
             // LocationLabel
@@ -104,7 +104,7 @@
             PartsBox.Location = new Point(12, 138);
             PartsBox.Name = "PartsBox";
             PartsBox.Size = new Size(453, 300);
-            PartsBox.TabIndex = 7;
+            PartsBox.TabIndex = 0;
             // 
             // SubmitQuantityButton
             // 
@@ -112,7 +112,7 @@
             SubmitQuantityButton.Location = new Point(356, 109);
             SubmitQuantityButton.Name = "SubmitQuantityButton";
             SubmitQuantityButton.Size = new Size(106, 23);
-            SubmitQuantityButton.TabIndex = 8;
+            SubmitQuantityButton.TabIndex = 5;
             SubmitQuantityButton.Text = "Submit Counts";
             SubmitQuantityButton.UseVisualStyleBackColor = true;
             SubmitQuantityButton.Click += SubmitQuantityButton_Click;
@@ -123,7 +123,7 @@
             FoundButton.Location = new Point(243, 109);
             FoundButton.Name = "FoundButton";
             FoundButton.Size = new Size(107, 23);
-            FoundButton.TabIndex = 9;
+            FoundButton.TabIndex = 4;
             FoundButton.Text = "Found Inventory";
             FoundButton.UseVisualStyleBackColor = true;
             FoundButton.Click += FoundButton_Click;

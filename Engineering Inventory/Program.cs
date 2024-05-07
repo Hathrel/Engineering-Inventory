@@ -1,15 +1,10 @@
 using System;
-using System.DirectoryServices;
-using System.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
-using System.Linq;
 
 namespace Engineering_Inventory
 {
     internal static class Program
     {
-        private static bool terminated = false;
         public static PythonInterop pI;
         public static bool addPartPermission;
         public static bool addLocPermission;
@@ -22,61 +17,49 @@ namespace Engineering_Inventory
         [STAThread]
         static void Main()
         {
-            // Initialize Python engine
             InitializePythonEngine();
 
-            // Initialize application configuration
-            ApplicationConfiguration.Initialize();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
 
-            // Subscribe to the ApplicationExit event
-            Application.ApplicationExit += Application_ApplicationExit;
-
-            // Run the login window
-            loginWindow loginWindow = new loginWindow(pI);
-            loginWindow.LoginSuccessful += LoginWindow_LoginSuccessful;
-            Application.Run(loginWindow);
-
-            // Check if login was successful
-            if (loginWindow.loginSuccess)
+            using (loginWindow loginWindow = new loginWindow(pI))
             {
-                // Store user permissions
-                dynamic userPermissions = loginWindow.user_permissions;
-                Program.addPartPermission = userPermissions["Addpart"];
-                Program.addLocPermission = userPermissions["Addloc"];
-                Program.editPermission = userPermissions["Edit"];
-                Program.purchasePermission = userPermissions["Purchase"];
-                Program.admin = userPermissions["Admin"];
+                Application.Run(loginWindow);
 
-                // Create MainForm instance only if login was successful
-                MainForm mainForm = new MainForm();
-                Application.Run(mainForm);
+                if (loginWindow.loginSuccess)
+                {
+                    dynamic userPermissions = loginWindow.user_permissions;
+                    addPartPermission = userPermissions["Addpart"];
+                    addLocPermission = userPermissions["Addloc"];
+                    editPermission = userPermissions["Edit"];
+                    purchasePermission = userPermissions["Purchase"];
+                    admin = userPermissions["Admin"];
 
-
-                // Close the current instance of loginWindow
-                loginWindow.Close();
+                    using (MainForm mainForm = new MainForm())
+                    {
+                        Application.Run(mainForm);
+                    }
+                }
             }
-        }
-
-        private static void LoginWindow_LoginSuccessful(object sender, string username)
-        {
-            user_name = username;
+            ShutdownApplication();
         }
 
         private static void InitializePythonEngine()
         {
-            // Create an instance of PythonInterop and initialize Python engine
             pI = new PythonInterop();
             pI.InitializePythonEngine();
         }
 
-        private static void Application_ApplicationExit(object sender, EventArgs e)
+        private static void ShutdownApplication()
         {
-            if(terminated == true){
+            if (Application.OpenForms.Count == 0)
+            {
                 pI.ShutdownPythonEngine();
+                Application.Exit();
             }
-            // Shutdown Python engine when the program exits
         }
     }
 }
+
 
 

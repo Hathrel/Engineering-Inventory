@@ -30,40 +30,34 @@ namespace Engineering_Inventory
             {
                 List<(string partNumber, int quantity, string description)> parts = Program.pI.CycleCountPull(location);
 
-                // Clear existing controls in PartsBox
                 PartsBox.Controls.Clear();
 
-                // Create controls for each part
-                int yPos = 20; // Initial y-position
+                int yPos = 20;
                 foreach (var part in parts)
                 {
-                    // Create label for part number
                     Label partNumberLabel = new Label();
                     partNumberLabel.Text = part.partNumber;
                     partNumberLabel.Location = new Point(20, yPos);
+                    partNumberLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
                     PartsBox.Controls.Add(partNumberLabel);
 
-                    // Create text box for quantity
                     TextBox quantityTextBox = new TextBox();
-                    quantityTextBox.Location = new Point(150, yPos);
-                    quantityTextBox.Tag = part.partNumber; // Associate the TextBox with the part number
+                    quantityTextBox.Location = new Point(120, yPos);
+                    quantityTextBox.Tag = part.partNumber;
                     PartsBox.Controls.Add(quantityTextBox);
                     int actualQty = part.quantity;
 
-                    // Create label for description
                     Label descriptionLabel = new Label();
                     descriptionLabel.Text = part.description;
                     descriptionLabel.Location = new Point(250, yPos);
-                    descriptionLabel.AutoSize = true; // Set autosize to true
+                    descriptionLabel.AutoSize = true;
                     PartsBox.Controls.Add(descriptionLabel);
 
-                    yPos += 30; // Increment y-position for next control
+                    yPos += 30;
                 }
-
-                // Show SubmitQuantityButton
                 SubmitQuantityButton.Visible = true;
+                FoundButton.Visible = true;
 
-                // Pass location and parts data to SubmitQuantityButton Click event handler
                 List<(string partNumber, int quantity)> partQuantities = parts.Select(p => (p.partNumber, 0)).ToList(); // Initialize quantities as 0
                 SubmitQuantityButton.Tag = Tuple.Create(location, partQuantities);
             }
@@ -112,7 +106,7 @@ namespace Engineering_Inventory
             // Handle the overall result
             if (overallSuccess)
             {
-                MessageBox.Show("All cycle counts successfully submitted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ;
             }
             else
             {
@@ -133,11 +127,21 @@ namespace Engineering_Inventory
         private void CycleCounts_Load(object sender, EventArgs e)
         {
             LocationBox.Select();
+            SubmitQuantityButton.Visible = false;
+            FoundButton.Visible = false;
         }
 
         private void FoundButton_Click(object sender, EventArgs e)
         {
-            AddFound addFound = new(LocationBox.Text);
+            if(LocationBox.Text == "")
+            {
+                MessageBox.Show("Please enter a location.");
+            }
+            else
+            {
+                AddFound addFound = new(LocationBox.Text);
+                addFound.ShowDialog();
+            }
         }
     }
 }
