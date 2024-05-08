@@ -14,8 +14,8 @@ namespace Engineering_Inventory
         public void InitializePythonEngine()
         {
             // Correctly set the path to the Python DLL
-            //Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
-            Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
+            Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
+            //Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
 
             // Initialize Python engine
             PythonEngine.Initialize();
@@ -137,27 +137,118 @@ namespace Engineering_Inventory
         {
             try
             {
-                // Call the Python method and store the result in a dynamic variable
                 dynamic result = pythonModule.add_new_part(part_number, part_description, minn, maxx, lead_time, supplier, price, comment, purchase_link);
-                bool success = false;
-                // Directly access dynamic properties
-                if (result.success == "True")
+                // Assume result is a PyObject that should be a tuple
+                if (result is PyObject tuple)
                 {
-                    success = true;
+                    // Explicitly cast the result of Length to int
+                    int tupleLength = (int)tuple.Length();
+                    if (tupleLength >= 2)
+                    {
+                        bool success = tuple[0].As<bool>();  // Access elements directly if possible
+                        string message = tuple[1].As<string>();
+                        return (success, message);
+                    }
+                    else
+                    {
+                        return (false, "Tuple does not contain enough elements.");
+                    }
                 }
-                string message = result.message;
-                // Return the values in a tuple
-                return (success, message);
+                else
+                {
+                    return (false, "Object is not a tuple");
+                }
             }
             catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException ex)
             {
-                // Handle cases where the dynamic object does not contain the expected properties
                 return (false, "Error accessing properties from the Python response: " + ex.Message);
             }
             catch (Exception ex)
             {
-                // Return false and the exception message if an error occurs
                 return (false, $"Failed to add new part: {ex.Message}");
+            }
+        }
+
+        public string GetPartDetails(string partNumber)
+        {
+            string message = pythonModule.delete_part_query(partNumber);
+            return message;
+        }
+
+        public dynamic GetPartInfo(string partNumber)
+        {
+            return pythonModule.get_part_info(partNumber);
+        }
+
+        public (bool success, string message) SetPartInfo(string part_number, string part_description, int? minn = null, int? maxx = null, int? lead_time = null, string supplier = null, float? price = null, string comment = null, string purchase_link = null)
+        {
+            try
+            {
+                dynamic result = pythonModule.set_part_info(part_number, part_description, minn, maxx, lead_time, supplier, price, comment, purchase_link);
+                // Assume result is a PyObject that should be a tuple
+                if (result is PyObject tuple)
+                {
+                    // Explicitly cast the result of Length to int
+                    int tupleLength = (int)tuple.Length();
+                    if (tupleLength >= 2)
+                    {
+                        bool success = tuple[0].As<bool>();  // Access elements directly if possible
+                        string message = tuple[1].As<string>();
+                        return (success, message);
+                    }
+                    else
+                    {
+                        return (false, "Tuple does not contain enough elements.");
+                    }
+                }
+                else
+                {
+                    return (false, "Object is not a tuple");
+                }
+            }
+            catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException ex)
+            {
+                return (false, "Error accessing properties from the Python response: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to add new part: {ex.Message}");
+            }
+        }
+
+        public bool DeletePart(string partNumber)
+        {
+            try
+            {
+                // Attempt to delete the part and return the result.
+                bool result = pythonModule.delete_part(partNumber);
+                return result;
+            }
+            catch
+            {
+                // If an error occurs, show a message box and return false.
+                MessageBox.Show("There was an error deleting the part");
+                return false;
+            }
+        }
+
+        public string EditLocation(string location, string module)
+        {
+           if (location != null)
+           {
+                try
+                {
+                    string result = pythonModule.edit_location(location, module);
+                    return result;
+                }
+                catch
+                {
+                    return "There was an error";
+                }
+           }
+            else
+            {
+                return "Location cannot be null";
             }
         }
     }

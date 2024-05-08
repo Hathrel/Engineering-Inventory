@@ -41,16 +41,16 @@ namespace Engineering_Inventory
                 float priceFloat = string.IsNullOrEmpty(price) ? 0f : float.Parse(price, CultureInfo.InvariantCulture);
 
                 // Call the method with the converted types and get the result
-                var (success, message) = Program.pI.AddPartNumber(part_number, part_description, minnInt, maxxInt, leadTimeInt, supplier, priceFloat, comment, purchase_link);
+                dynamic result = Program.pI.AddPartNumber(part_number, part_description, minnInt, maxxInt, leadTimeInt, supplier, priceFloat, comment, purchase_link);
 
                 // Display the result message to the user
-                if (success)
+                if (result.Item1)
                 {
-                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(result.Item2, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(result.Item2, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (FormatException)
@@ -63,56 +63,10 @@ namespace Engineering_Inventory
             }
         }
 
-
         private void CancelButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-
-        private void HelpButton_Click(object sender, EventArgs e)
-        {
-            string helpText;
-            Control activeControl = this.ActiveControl;
-            if (activeControl != null)
-            {
-                switch (activeControl.Name)
-                {
-                    case "PartNumberBox":
-                        helpText = "Assign the part number. Current convention follows 'ENG000111'.";
-                        break;
-                    case "PartDescBox":
-                        helpText = "Describe what the part is, or enter the manufacturer's description.";
-                        break;
-                    case "MinnBox":
-                        helpText = "Minimum quantity before order is needed.";
-                        break;
-                    case "MaxxBox":
-                        helpText = "Maximum quantity to keep on hand. This is what we will try to order to during a PO.";
-                        break;
-                    case "LeadTimeBox":
-                        helpText = "How long on average does it take to arrive.";
-                        break;
-                    case "SupplierBox":
-                        helpText = "Who we are buying this from.";
-                        break;
-                    case "PriceBox":
-                        helpText = "Cost per unit. In multi-pack parts, divide the total cost by the number of units.";
-                        break;
-                    case "CommentsBox":
-                        helpText = "If there is anything additional to know about this part, it goes here.";
-                        break;
-                    case "PurchaseLinkBox":
-                        helpText = "Must be a valid URL. This should be a link to the purchase page or purchasing information.";
-                        break;
-                    default:
-                        helpText = "No help available for this item.";
-                        break;
-                }
-
-                MessageBox.Show(helpText, "Help Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
 
         private void PartNumberBox_KeyPress(object sender, KeyPressEventArgs e)
         {

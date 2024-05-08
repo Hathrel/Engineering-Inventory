@@ -57,7 +57,7 @@ def database_login(username, password, site):
             return (False, "Sorry, there was an error with the database. Please try again.", {})
 
 def open_database_connection():
-    db_path = r"C:/Users/Derek/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
+    db_path = r"C:/Users/dboyer/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
     connection_string = fr"DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={db_path};"
     try:
         connection = db.connect(connection_string)
@@ -291,17 +291,26 @@ def add_new_part(part_number, part_description, minn=None, maxx=None, lead_time=
     try:
         with open_database_connection() as conn:
             with conn.cursor() as cursor:
+                # Check for the maximum part number that starts with "ENG"
+                eng_sql = "SELECT MAX(Part_Number) FROM Part_List WHERE Part_Number LIKE 'ENG%'"
+                cursor.execute(eng_sql)
+                last_number = cursor.fetchone()[0]
+                last_digit = int(last_number[3:]) + 1
+                new_location_suggestion = "ENG"+str(last_digit).zfill(6)
+
+                # Check if the part number already exists
                 check_sql = "SELECT COUNT(*) FROM Part_List WHERE Part_Number = ?"
                 cursor.execute(check_sql, (part_number,))
                 if cursor.fetchone()[0] > 0:
-                    return False, "Error: Part number already exists."
+                    return False, f"Error: Part number already exists. Try {new_location_suggestion}"
 
+                # Insert the new part into Part_List
                 insert_sql = """
                     INSERT INTO Part_List
                         (Part_Number, Part_Description, MIN, MAX, Lead_Time, Supplier, Price, Comment, Purchase_Link)
                     VALUES
                         (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """
+                """
                 params = (
                     part_number,
                     part_description,
@@ -315,13 +324,127 @@ def add_new_part(part_number, part_description, minn=None, maxx=None, lead_time=
                 )
                 cursor.execute(insert_sql, params)
                 conn.commit()
-                return True, "Part Added Successfully."
+                return (True, "Part Added Successfully. ")
     except Exception as e:
-        return False, str(e)
+        return (False, str(e))
 
+def delete_part_query(part_number):
+    try:
+        with open_database_connection() as conn:
+            cursor = conn.cursor()
+            part_desc = cursor.execute("SELECT Part_Description FROM Part_List WHERE Part_Number = ?", (part_number,)).fetchone()
+            if part_desc:
+                return f"{part_desc[0]}"
+            else:
+                return "Part number not found."
+    except Exception as e:
+        return f"There was an error retrieving Part_Description: {e}"
 
-             
-            
+def delete_part(part_number):
+    try:
+        with open_database_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM Part_List WHERE Part_Number = ?", (part_number,))
+            conn.commit()
+            return True
+    except Exception as e:
+        print(f"Error deleting part: {e}")
+        return False
+
+def get_part_info(part_number):
+    try:
+        with open_database_connection() as conn:
+            cursor = conn.cursor()
+            query = """
+                SELECT Part_Description, MIN, MAX, Lead_Time, Supplier, Price, Comment, Purchase_Link
+                FROM Part_List 
+                WHERE Part_Number = ?
+            """
+            cursor.execute(query, (part_number,))
+            row = cursor.fetchone()
+            if row:
+                # Get the column names
+                column_names = [desc[0] for desc in cursor.description]
+                # Create a dictionary where each value is converted to a string
+                part_info_dict = {column_names[i]: str(row[i]) for i in range(len(column_names))}
+                return part_info_dict
+            else:
+                return None
+    except Exception as e:
+        print(f"Error retrieving part information: {e}")
+        return None
+    
+def set_part_info(part_number, part_description, minn=None, maxx=None, lead_time=None, supplier=None, price=None, comment=None, purchase_link=None):
+    try:
+        with open_database_connection() as conn:
+            with conn.cursor() as cursor:
+                # Check if the part number actually exists
+                check_sql = "SELECT COUNT(*) FROM Part_List WHERE Part_Number = ?"
+                cursor.execute(check_sql, (part_number,))
+                if cursor.fetchone()[0] == 0:
+                    return False, "Error: Part number does not exist."
+
+                # Update the part in Part_List
+                update_sql = """
+                    UPDATE Part_List SET
+                        Part_Description = ?,
+                        MIN = ?,
+                        MAX = ?,
+                        Lead_Time = ?,
+                        Supplier = ?,
+                        Price = ?,
+                        Comment = ?,
+                        Purchase_Link = ?
+                    WHERE Part_Number = ?
+                """
+                params = (
+                    part_description,
+                    None if minn is None else int(minn),
+                    None if maxx is None else int(maxx),
+                    None if lead_time is None else int(lead_time),
+                    supplier,
+                    None if price is None else float(price),
+                    comment,
+                    purchase_link,
+                    part_number  # Ensure this is the last parameter to match the WHERE clause
+                )
+                cursor.execute(update_sql, params)
+                conn.commit()
+                return (True, "Part updated successfully.")
+    except Exception as e:
+        return (False, str(e))
+
+def edit_loc(location, module):
+    try:
+        with open_database_connection() as conn, conn.cursor() as cursor:
+            table_name = f"Locations_{user_site}"
+
+            if module == "Add":
+                # Check if the location already exists
+                cursor.execute(f"SELECT Location_ID FROM {table_name} WHERE Location = ?", (location,))
+                if cursor.fetchone() is None:  # If no results, the location does not exist
+                    cursor.execute(f"INSERT INTO {table_name} (Location) VALUES(?)", (location,))
+                    conn.commit()
+                    return "Location added successfully."
+                else:
+                    return "Location already exists."
+
+            elif module == "Delete":
+                # Check if the location exists before attempting to delete
+                cursor.execute(f"SELECT Location_ID FROM {table_name} WHERE Location = ?", (location,))
+                if cursor.fetchone() is not None:  # If results, the location exists
+                    cursor.execute(f"DELETE FROM {table_name} WHERE Location = ?", (location,))
+                    conn.commit()
+                    return "Location deleted successfully."
+                else:
+                    return "Location does not exist."
+
+    except Exception as e:
+        return f"An error occurred: {e}"
+
+    except Exception as e:
+        return f"An error occurred: {e}"
+        
 def log_transaction(part_number, old_location, new_location, transaction_qty, new_qty, total_qty, module):
     with open_database_connection() as conn, conn.cursor() as cursor:
         date = datetime.now()

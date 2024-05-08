@@ -49,8 +49,6 @@
             SubmitButton = new Button();
             CancelButton = new Button();
             AddPartBanner = new Label();
-            HelpButton = new Button();
-            HelpLabel = new Label();
             HelperLabel = new Label();
             SuspendLayout();
             // 
@@ -237,29 +235,10 @@
             AddPartBanner.TabIndex = 20;
             AddPartBanner.Text = "Add Part";
             // 
-            // HelpButton
-            // 
-            HelpButton.Location = new Point(436, 138);
-            HelpButton.Name = "HelpButton";
-            HelpButton.Size = new Size(100, 23);
-            HelpButton.TabIndex = 21;
-            HelpButton.Text = "Help";
-            HelpButton.UseVisualStyleBackColor = true;
-            HelpButton.Click += HelpButton_Click;
-            // 
-            // HelpLabel
-            // 
-            HelpLabel.AutoSize = true;
-            HelpLabel.Location = new Point(436, 120);
-            HelpLabel.Name = "HelpLabel";
-            HelpLabel.Size = new Size(126, 15);
-            HelpLabel.TabIndex = 22;
-            HelpLabel.Text = "Select field in question";
-            // 
             // HelperLabel
             // 
             HelperLabel.AutoSize = true;
-            HelperLabel.Location = new Point(24, 147);
+            HelperLabel.Location = new Point(465, 109);
             HelperLabel.Name = "HelperLabel";
             HelperLabel.Size = new Size(59, 15);
             HelperLabel.TabIndex = 23;
@@ -271,8 +250,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(563, 171);
             Controls.Add(HelperLabel);
-            Controls.Add(HelpLabel);
-            Controls.Add(HelpButton);
             Controls.Add(AddPartBanner);
             Controls.Add(CancelButton);
             Controls.Add(SubmitButton);
@@ -325,8 +302,6 @@
         private Button SubmitButton;
         private Button CancelButton;
         private Label AddPartBanner;
-        private Button HelpButton;
-        private Label HelpLabel;
         private Label HelperLabel;
     }
 }

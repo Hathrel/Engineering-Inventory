@@ -83,6 +83,25 @@ namespace Engineering_Inventory
             AddPartWindow addPartWindow = new();
             addPartWindow.ShowDialog();
         }
+
+        private void DeletePartButton_Click(object sender, EventArgs e)
+        {
+            DeletePartWindow deletePartWindow = new();
+            deletePartWindow.ShowDialog();
+        }
+
+        private void EditPartButton_Click(object sender, EventArgs e)
+        {
+            EditPartWindow editPartWindow = new();
+            editPartWindow.ShowDialog();
+        }
+
+        private void DeleteLocationButton_MouseClick(object sender, MouseEventArgs e)
+        {
+
+        }
+
+
     }
 }
 

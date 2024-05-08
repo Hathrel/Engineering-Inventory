@@ -154,6 +154,7 @@
             EditPartButton.TabIndex = 5;
             EditPartButton.Text = "Edit Existing Part";
             EditPartButton.UseVisualStyleBackColor = true;
+            EditPartButton.Click += EditPartButton_Click;
             // 
             // DeletePartButton
             // 
@@ -164,6 +165,7 @@
             DeletePartButton.TabIndex = 4;
             DeletePartButton.Text = "Delete Part";
             DeletePartButton.UseVisualStyleBackColor = true;
+            DeletePartButton.Click += DeletePartButton_Click;
             // 
             // DeleteLocationButton
             // 
@@ -174,6 +176,7 @@
             DeleteLocationButton.TabIndex = 6;
             DeleteLocationButton.Text = "Delete Location";
             DeleteLocationButton.UseVisualStyleBackColor = true;
+            DeleteLocationButton.MouseClick += DeleteLocationButton_MouseClick;
             // 
             // AddLocationButton
             // 
