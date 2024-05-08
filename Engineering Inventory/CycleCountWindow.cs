@@ -32,34 +32,56 @@ namespace Engineering_Inventory
 
                 PartsBox.Controls.Clear();
 
-                int yPos = 20;
-                foreach (var part in parts)
+                if (parts.Count == 0)
                 {
-                    Label partNumberLabel = new Label();
-                    partNumberLabel.Text = part.partNumber;
-                    partNumberLabel.Location = new Point(20, yPos);
-                    partNumberLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-                    PartsBox.Controls.Add(partNumberLabel);
+                    TextBox emptyTextBox = new TextBox();
+                    emptyTextBox.Location = new Point(120, 20); 
+                    emptyTextBox.Text = "EMPTY";
+                    emptyTextBox.Enabled = false;
+                    PartsBox.Controls.Add(emptyTextBox);
 
-                    TextBox quantityTextBox = new TextBox();
-                    quantityTextBox.Location = new Point(120, yPos);
-                    quantityTextBox.Tag = part.partNumber;
-                    PartsBox.Controls.Add(quantityTextBox);
-                    int actualQty = part.quantity;
+                    Label instructionLabel = new Label();
+                    instructionLabel.Text = "No parts found. Click 'Found Inventory' and enter found parts, or enter next location.";
+                    instructionLabel.Location = new Point(250, 20);
+                    instructionLabel.AutoSize = true;
+                    PartsBox.Controls.Add(instructionLabel);
 
-                    Label descriptionLabel = new Label();
-                    descriptionLabel.Text = part.description;
-                    descriptionLabel.Location = new Point(250, yPos);
-                    descriptionLabel.AutoSize = true;
-                    PartsBox.Controls.Add(descriptionLabel);
 
-                    yPos += 30;
+                    SubmitQuantityButton.Tag = Tuple.Create(location, new List<(string partNumber, string quantity)> { ("EMPTY", "") }); //Maybe later implement a soluction to enter "EMPTY' as a count
+                    SubmitQuantityButton.Visible = true;
+                    FoundButton.Visible = true;
                 }
-                SubmitQuantityButton.Visible = true;
-                FoundButton.Visible = true;
+                else
+                {
+                    int yPos = 20;
+                    foreach (var part in parts)
+                    {
+                        Label partNumberLabel = new Label();
+                        partNumberLabel.Text = part.partNumber;
+                        partNumberLabel.Location = new Point(20, yPos);
+                        partNumberLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+                        PartsBox.Controls.Add(partNumberLabel);
 
-                List<(string partNumber, int quantity)> partQuantities = parts.Select(p => (p.partNumber, 0)).ToList(); // Initialize quantities as 0
-                SubmitQuantityButton.Tag = Tuple.Create(location, partQuantities);
+                        TextBox quantityTextBox = new TextBox();
+                        quantityTextBox.Location = new Point(120, yPos);
+                        quantityTextBox.Tag = part.partNumber;
+                        PartsBox.Controls.Add(quantityTextBox);
+
+                        Label descriptionLabel = new Label();
+                        descriptionLabel.Text = part.description;
+                        descriptionLabel.Location = new Point(250, yPos);
+                        descriptionLabel.AutoSize = true;
+                        PartsBox.Controls.Add(descriptionLabel);
+
+                        yPos += 30;
+                    }
+
+                    // Initialize partQuantities with part number and "0" as default quantity
+                    List<(string partNumber, string quantity)> partQuantities = parts.Select(p => (p.partNumber, "0")).ToList();
+                    SubmitQuantityButton.Tag = Tuple.Create(location, partQuantities);
+                    SubmitQuantityButton.Visible = true;
+                    FoundButton.Visible = true;
+                }
             }
             else
             {
@@ -67,22 +89,22 @@ namespace Engineering_Inventory
                 MessageBox.Show("Please enter a location.");
             }
         }
+
+
         private void SubmitQuantityButton_Click(object sender, EventArgs e)
         {
             string location = LocationBox.Text;  // Assuming LocationBox.Text contains the location data
             bool overallSuccess = true;
             string errorMessage = "";
-
             foreach (Control control in PartsBox.Controls)
             {
                 if (control is TextBox textBox)
                 {
                     string partNumber = textBox.Tag as string;
-                    int quantity;
+                    string quantity = textBox.Text;  // Directly use the text from the TextBox
 
-                    if (int.TryParse(textBox.Text, out quantity))
+                    if (!string.IsNullOrEmpty(quantity))
                     {
-                        // Call the CycleCountSubmit method for each part and quantity
                         try
                         {
                             Program.pI.CycleCountSubmit(location, partNumber, quantity);
@@ -91,19 +113,17 @@ namespace Engineering_Inventory
                         {
                             overallSuccess = false;
                             errorMessage = $"Error processing part {partNumber}: {ex.Message}";
-                            break;  // Optionally stop processing after the first error
+                            break;
                         }
                     }
                     else
                     {
                         overallSuccess = false;
-                        errorMessage = $"Invalid quantity entered for part {partNumber}.";
-                        break;  // Optionally stop processing after the first error
+                        errorMessage = $"Quantity must be entered for part {partNumber}.";
+                        break;
                     }
                 }
             }
-
-            // Handle the overall result
             if (overallSuccess)
             {
                 ;
@@ -139,7 +159,7 @@ namespace Engineering_Inventory
             }
             else
             {
-                AddFound addFound = new(LocationBox.Text);
+                AddFoundWindow addFound = new(LocationBox.Text);
                 addFound.ShowDialog();
             }
         }

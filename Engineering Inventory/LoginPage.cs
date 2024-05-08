@@ -23,37 +23,33 @@ namespace Engineering_Inventory
             string password = passwordBox.Text;
             string site = SiteSelect.Text.ToUpper();
 
-            // Validate the selected site
             bool siteIsValid = SiteSelect.Items.Cast<object>().Any(item => item.ToString() == site);
             if (!siteIsValid)
             {
                 MessageBox.Show("The selected site is not valid.", "Invalid Site", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;  // Exit the method early
+                return;
             }
 
             try
             {
-                // Call DatabaseLogin method from PythonInterop
+
                 if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
                 {
                     (bool success, string message, dynamic permissions, string loggedInUsername) = Program.pI.DatabaseLogin(username, password, site);
 
-                    // Handle the result
                     if (success)
                     {
-                        // Close the current login form
+
                         loginSuccess = true;
                         user_permissions = permissions;
-                        string loggedInUsernameValue = loggedInUsername; // Store the value in a separate variable
+                        string loggedInUsernameValue = loggedInUsername;
 
                         LoginSuccessful?.Invoke(this, loggedInUsername);
-
-                        // Close the current instance of loginWindow
+                        Program.user_name = loggedInUsername;
                         Close();
                     }
                     else
                     {
-                        // Show error message if login failed
                         MessageBox.Show(message, "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
@@ -65,7 +61,6 @@ namespace Engineering_Inventory
             }
             catch (Exception ex)
             {
-                // Handle any exceptions
                 MessageBox.Show("Error during login: " + ex.Message);
             }
         }
@@ -90,7 +85,6 @@ namespace Engineering_Inventory
 
         private void loginWindow_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Check if the Enter key is pressed
             if (e.KeyChar == (char)Keys.Enter)
             {
                 if (!string.IsNullOrEmpty(usernameBox.Text) && !string.IsNullOrEmpty(passwordBox.Text) && !string.IsNullOrEmpty(SiteSelect.Text))

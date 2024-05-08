@@ -1,6 +1,6 @@
 ﻿namespace Engineering_Inventory
 {
-    partial class AddFound
+    partial class AddFoundWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -115,6 +115,7 @@
             Controls.Add(AddMoreBox);
             Controls.Add(AddFoundStatus);
             Controls.Add(AddFoundBanner);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Name = "AddFound";
             Text = "Add Found";
             ResumeLayout(false);

@@ -150,6 +150,7 @@
             Controls.Add(partBox);
             Controls.Add(qtyBox);
             Controls.Add(PickingBanner);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Name = "PickingInventory";
             Text = "Picking Inventory";
             ResumeLayout(false);

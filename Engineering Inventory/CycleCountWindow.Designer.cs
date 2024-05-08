@@ -143,6 +143,7 @@
             Controls.Add(SubmitButton);
             Controls.Add(CycleCountStatus);
             Controls.Add(CycleCountBanner);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Name = "CycleCounts";
             Text = "Cycle Counts";
             Load += CycleCounts_Load;

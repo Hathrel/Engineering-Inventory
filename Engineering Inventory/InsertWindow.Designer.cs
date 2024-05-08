@@ -150,6 +150,7 @@
             Controls.Add(partBox);
             Controls.Add(qtyBox);
             Controls.Add(InsertBanner);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Name = "InsertInventory";
             Text = "Insert Inventory";
             ResumeLayout(false);

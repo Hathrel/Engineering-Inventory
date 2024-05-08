@@ -171,6 +171,7 @@
             Controls.Add(partBox);
             Controls.Add(qtyBox);
             Controls.Add(BinMoveBanner);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Name = "BinMoveInventory";
             Text = "Move Inventory";
             ResumeLayout(false);

@@ -10,10 +10,10 @@ using System.Windows.Forms;
 
 namespace Engineering_Inventory
 {
-    public partial class AddFound : Form
+    public partial class AddFoundWindow : Form
     {
         private string partLocation;
-        public AddFound(string location)
+        public AddFoundWindow(string location)
         {
             this.partLocation = location.ToUpper();
             InitializeComponent();
@@ -57,7 +57,7 @@ namespace Engineering_Inventory
             if (!string.IsNullOrEmpty(QtyBox.Text) && !string.IsNullOrEmpty(PartBox.Text))
             {
                 string part = PartBox.Text;
-                int qty = int.Parse(QtyBox.Text);
+                string qty = QtyBox.Text;
                 Program.pI.CycleCountSubmit(partLocation, part, qty);
                 if (AddMoreBox.Checked == true)
                 {

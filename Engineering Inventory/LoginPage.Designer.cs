@@ -115,6 +115,7 @@
             Controls.Add(usernameBox);
             Controls.Add(passwordText);
             Controls.Add(usernameText);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Name = "loginWindow";
             Text = "Log In";
             KeyPress += loginWindow_KeyPress;

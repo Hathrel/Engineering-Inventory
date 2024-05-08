@@ -8,8 +8,7 @@ namespace Engineering_Inventory
         public MainForm()
         {
             InitializeComponent();
-
-            welcomeLabel.Text = $"Welcome {Program.user_name}, you are working in {Program.user_site}";
+            MainStatusLabel.Text = $"Welcome {Program.user_name}, you are working in {Program.user_site}";
         }
         private void insertButton_Click(object sender, EventArgs e)
         {
@@ -57,6 +56,32 @@ namespace Engineering_Inventory
 
             CycleCounts cycleCount = new();
             cycleCount.ShowDialog();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            if (Program.editPermission)
+            {
+                actionsBox.Visible = true;
+            }
+            if (Program.addLocPermission)
+            {
+                LocationEditBox.Visible = true;
+            }
+            if (Program.addPartPermission)
+            {
+                PartEditBox.Visible = true;
+            }
+            if (Program.admin)
+            {
+                AdminActionsBox.Visible = true;
+            }
+        }
+
+        private void AddPartButton_Click(object sender, EventArgs e)
+        {
+            AddPartWindow addPartWindow = new();
+            addPartWindow.ShowDialog();
         }
     }
 }

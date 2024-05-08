@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Security.Policy;
+using System.Xml.Linq;
 using Python.Runtime;
 
 namespace Engineering_Inventory
@@ -125,9 +128,37 @@ namespace Engineering_Inventory
             }
         }
 
-        public void CycleCountSubmit(string location, string part, int qty)
+        public void CycleCountSubmit(string location, string part, string qty)
         {
             pythonModule.submit_cycle_count(location, part, qty);
+        }
+
+        public (bool success, string message) AddPartNumber(string part_number, string part_description, int? minn = null, int? maxx = null, int? lead_time = null, string supplier = null, float? price = null, string comment = null, string purchase_link = null)
+        {
+            try
+            {
+                // Call the Python method and store the result in a dynamic variable
+                dynamic result = pythonModule.add_new_part(part_number, part_description, minn, maxx, lead_time, supplier, price, comment, purchase_link);
+                bool success = false;
+                // Directly access dynamic properties
+                if (result.success == "True")
+                {
+                    success = true;
+                }
+                string message = result.message;
+                // Return the values in a tuple
+                return (success, message);
+            }
+            catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException ex)
+            {
+                // Handle cases where the dynamic object does not contain the expected properties
+                return (false, "Error accessing properties from the Python response: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Return false and the exception message if an error occurs
+                return (false, $"Failed to add new part: {ex.Message}");
+            }
         }
     }
 }

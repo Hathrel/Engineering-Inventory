@@ -286,8 +286,42 @@ def submit_cycle_count(location, part, qty):
             return False, str(e)
         except Exception as e:
             return False, f"An error occurred: {str(e)}"
+        
+def add_new_part(part_number, part_description, minn=None, maxx=None, lead_time=None, supplier=None, price=None, comment=None, purchase_link=None):
+    try:
+        with open_database_connection() as conn:
+            with conn.cursor() as cursor:
+                check_sql = "SELECT COUNT(*) FROM Part_List WHERE Part_Number = ?"
+                cursor.execute(check_sql, (part_number,))
+                if cursor.fetchone()[0] > 0:
+                    return False, "Error: Part number already exists."
+
+                insert_sql = """
+                    INSERT INTO Part_List
+                        (Part_Number, Part_Description, MIN, MAX, Lead_Time, Supplier, Price, Comment, Purchase_Link)
+                    VALUES
+                        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """
+                params = (
+                    part_number,
+                    part_description,
+                    None if minn is None else int(minn),
+                    None if maxx is None else int(maxx),
+                    None if lead_time is None else int(lead_time),
+                    supplier,
+                    None if price is None else float(price),
+                    comment,
+                    purchase_link
+                )
+                cursor.execute(insert_sql, params)
+                conn.commit()
+                return True, "Part Added Successfully."
+    except Exception as e:
+        return False, str(e)
 
 
+             
+            
 def log_transaction(part_number, old_location, new_location, transaction_qty, new_qty, total_qty, module):
     with open_database_connection() as conn, conn.cursor() as cursor:
         date = datetime.now()
