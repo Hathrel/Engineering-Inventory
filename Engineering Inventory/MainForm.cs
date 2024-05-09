@@ -12,48 +12,24 @@ namespace Engineering_Inventory
         }
         private void insertButton_Click(object sender, EventArgs e)
         {
-            if (!Program.editPermission)
-            {
-                MessageBox.Show("You don't have permission to do that!");
-                return;
-            }
-
             InsertInventory insertInventory = new();
             insertInventory.ShowDialog();
         }
 
         private void PickingButton_Click(object sender, EventArgs e)
         {
-            if (!Program.editPermission)
-            {
-                MessageBox.Show("You don't have permission to do that!");
-                return;
-            }
-
             PickingInventory pickingInventory = new();
             pickingInventory.ShowDialog();
         }
 
         private void BinMove_Click(object sender, EventArgs e)
         {
-            if (!Program.editPermission)
-            {
-                MessageBox.Show("You don't have permission to do that!");
-                return;
-            }
-
             BinMoveInventory moveInventory = new();
             moveInventory.ShowDialog();
         }
 
         private void CycleCount_MouseClick(object sender, MouseEventArgs e)
         {
-            if (!Program.editPermission)
-            {
-                MessageBox.Show("You don't have permission to do that!");
-                return;
-            }
-
             CycleCounts cycleCount = new();
             cycleCount.ShowDialog();
         }
@@ -101,7 +77,33 @@ namespace Engineering_Inventory
 
         }
 
+        private void AddLocationButton_Click(object sender, EventArgs e)
+        {
+            EditLocationWindow editLocationWindow = new("Add");
+            editLocationWindow.ShowDialog();
+        }
 
+        private void DeleteLocationButton_Click(object sender, EventArgs e)
+        {
+            EditLocationWindow editLocationWindow = new("Delete");
+            editLocationWindow.ShowDialog();
+        }
+
+        private void AddUserButton_Click(object sender, EventArgs e)
+        {
+            AddUserWindow addUserWindow = new();
+            addUserWindow.ShowDialog();
+        }
+
+        private void DeleteUserButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void EditUserButton_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 

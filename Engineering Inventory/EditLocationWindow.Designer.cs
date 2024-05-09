@@ -28,22 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            AddLocLabel = new Label();
+            LocBanner = new Label();
             LocLabel = new Label();
             LocBox = new TextBox();
             SubmitButton = new Button();
             CancelButton = new Button();
             SuspendLayout();
             // 
-            // AddLocLabel
+            // LocBanner
             // 
-            AddLocLabel.AutoSize = true;
-            AddLocLabel.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            AddLocLabel.Location = new Point(12, 9);
-            AddLocLabel.Name = "AddLocLabel";
-            AddLocLabel.Size = new Size(188, 37);
-            AddLocLabel.TabIndex = 0;
-            AddLocLabel.Text = "Add Location";
+            LocBanner.AutoSize = true;
+            LocBanner.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            LocBanner.Location = new Point(12, 9);
+            LocBanner.Name = "LocBanner";
+            LocBanner.Size = new Size(188, 37);
+            LocBanner.TabIndex = 0;
+            LocBanner.Text = "Add Location";
             // 
             // LocLabel
             // 
@@ -58,7 +58,7 @@
             // 
             LocBox.Location = new Point(12, 64);
             LocBox.Name = "LocBox";
-            LocBox.Size = new Size(100, 23);
+            LocBox.Size = new Size(156, 23);
             LocBox.TabIndex = 2;
             LocBox.KeyPress += LocBox_KeyPress;
             // 
@@ -86,12 +86,12 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(252, 119);
             Controls.Add(CancelButton);
             Controls.Add(SubmitButton);
             Controls.Add(LocBox);
             Controls.Add(LocLabel);
-            Controls.Add(AddLocLabel);
+            Controls.Add(LocBanner);
             Name = "EditLocationWindow";
             Text = "Add Location";
             ResumeLayout(false);
@@ -100,7 +100,7 @@
 
         #endregion
 
-        private Label AddLocLabel;
+        private Label LocBanner;
         private Label LocLabel;
         private TextBox LocBox;
         private Button SubmitButton;

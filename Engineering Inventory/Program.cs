@@ -9,7 +9,6 @@ namespace Engineering_Inventory
         public static bool addPartPermission;
         public static bool addLocPermission;
         public static bool editPermission;
-        public static bool purchasePermission;
         public static bool admin;
         public static string user_site;
         public static string user_name;
@@ -32,7 +31,6 @@ namespace Engineering_Inventory
                     addPartPermission = userPermissions["Addpart"];
                     addLocPermission = userPermissions["Addloc"];
                     editPermission = userPermissions["Edit"];
-                    purchasePermission = userPermissions["Purchase"];
                     admin = userPermissions["Admin"];
 
                     using (MainForm mainForm = new MainForm())

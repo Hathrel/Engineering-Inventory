@@ -12,21 +12,26 @@ namespace Engineering_Inventory
 {
     public partial class EditLocationWindow : Form
     {
-        public EditLocationWindow()
+        private string editModule;
+        public EditLocationWindow(string module)
         {
             InitializeComponent();
+            this.Text = $"{module} Location";
+            this.editModule = module;
+            LocBanner.Text = $"{module} Location";
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-
+            this.Close();
         }
 
         private void SubmitButton_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(LocBox.Text)) { }
             {
-               
+                string result = Program.pI.EditLocation(LocBox.Text, editModule);
+                MessageBox.Show(result);
             }
         }
 

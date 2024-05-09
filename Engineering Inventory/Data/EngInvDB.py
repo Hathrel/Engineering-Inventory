@@ -23,7 +23,7 @@ def database_login(username, password, site):
 
         try:
             sql_command = f"""
-            SELECT [Password], [Add_Part_Permit], [Add_Loc_Permit], [Edit_Permit], [Purchase_Permit], [Admin], [{site}]
+            SELECT [Password], [Add_Part_Permit], [Add_Loc_Permit], [Edit_Permit], [Admin], [{site}]
             FROM [Login_Data] WHERE [Username]=?
             """
             cursor.execute(sql_command, [username])
@@ -31,13 +31,12 @@ def database_login(username, password, site):
             print(result)
 
             if result:
-                stored_password, add_part_permit, add_loc_permit, edit_permit, purchase_permit, admin, site = result
+                stored_password, add_part_permit, add_loc_permit, edit_permit, admin, site = result
                 if stored_password == password:
                     global_permissions = {
                         "Addpart": add_part_permit,
                         "Addloc": add_loc_permit,
                         "Edit": edit_permit,
-                        "Purchase": purchase_permit,
                         "Admin": admin,
                         "Site": site
                     }
@@ -57,7 +56,7 @@ def database_login(username, password, site):
             return (False, "Sorry, there was an error with the database. Please try again.", {})
 
 def open_database_connection():
-    db_path = r"C:/Users/dboyer/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
+    db_path = r"C:/Users/Derek/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
     connection_string = fr"DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={db_path};"
     try:
         connection = db.connect(connection_string)
@@ -289,22 +288,18 @@ def submit_cycle_count(location, part, qty):
         
 def add_new_part(part_number, part_description, minn=None, maxx=None, lead_time=None, supplier=None, price=None, comment=None, purchase_link=None):
     try:
-        with open_database_connection() as conn:
-            with conn.cursor() as cursor:
-                # Check for the maximum part number that starts with "ENG"
+        with open_database_connection() as conn, conn.cursor() as cursor:
                 eng_sql = "SELECT MAX(Part_Number) FROM Part_List WHERE Part_Number LIKE 'ENG%'"
                 cursor.execute(eng_sql)
                 last_number = cursor.fetchone()[0]
                 last_digit = int(last_number[3:]) + 1
                 new_location_suggestion = "ENG"+str(last_digit).zfill(6)
 
-                # Check if the part number already exists
                 check_sql = "SELECT COUNT(*) FROM Part_List WHERE Part_Number = ?"
                 cursor.execute(check_sql, (part_number,))
                 if cursor.fetchone()[0] > 0:
                     return False, f"Error: Part number already exists. Try {new_location_suggestion}"
 
-                # Insert the new part into Part_List
                 insert_sql = """
                     INSERT INTO Part_List
                         (Part_Number, Part_Description, MIN, MAX, Lead_Time, Supplier, Price, Comment, Purchase_Link)
@@ -415,6 +410,7 @@ def set_part_info(part_number, part_description, minn=None, maxx=None, lead_time
         return (False, str(e))
 
 def edit_loc(location, module):
+    user_site = "CVG2"
     try:
         with open_database_connection() as conn, conn.cursor() as cursor:
             table_name = f"Locations_{user_site}"
@@ -444,7 +440,58 @@ def edit_loc(location, module):
 
     except Exception as e:
         return f"An error occurred: {e}"
-        
+    
+def add_user(username, password, permissions):
+    try:
+        add_part = permissions["Edit Parts"];
+        add_loc = permissions["Edit Locations"];
+        edit = permissions["Edit Inventory"];
+        admin = permissions["Admin"];
+        cvg2permit = permissions["CVG2"];
+        lex1permit = permissions["LEX1"];
+        swedespermit = permissions["117"];
+        westchesterpermit = permissions["1305"];
+        yyzpermit = permissions["YYZ"];
+
+        with open_database_connection() as conn, conn.cursor() as cursor:
+                check_sql = "SELECT COUNT(*) FROM Login_Data WHERE Username = ?"
+                cursor.execute(check_sql, (username,))
+                if cursor.fetchone()[0] > 0:
+                    return "User already exists in database"
+
+                insert_user = """
+                INSERT INTO Login_Data (Username, Password, Add_Part_Permit, Add_Loc_Permit, Edit_Permit, Admin, CVG2, 117, LEX1, 1305, YYZ)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """
+                params = (
+                    username,
+                    password,
+                    add_part,
+                    add_loc,
+                    edit,
+                    admin,
+                    cvg2permit,
+                    swedespermit,
+                    lex1permit,
+                    westchesterpermit,
+                    yyzpermit
+                )
+                cursor.execute(insert_user, params)
+                conn.commit()
+                return "User added successfully."
+    except Exception as e:
+        return f"An error occurred: {str(e)}"
+    
+def delete_user(username):
+        try:
+            with open_database_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM Login_Data WHERE Username = ?", (username,))
+                conn.commit()
+                return "User deleted successfully."
+        except Exception as e:
+            return f"Error deleting user: {e}"
+       
 def log_transaction(part_number, old_location, new_location, transaction_qty, new_qty, total_qty, module):
     with open_database_connection() as conn, conn.cursor() as cursor:
         date = datetime.now()
@@ -481,3 +528,4 @@ def log_transaction(part_number, old_location, new_location, transaction_qty, ne
 
         cursor.execute("INSERT INTO Transaction_Logs (Part_ID, Old_Location_ID, New_Location_ID, Transaction_Quantity, New_Quantity, Total_Quantity, User_Name, Site, Module, Transaction_Date, Tran_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (part_number, old_location, new_location, transaction_qty, new_qty, total_qty, username, site, module, date, primary_key))
         conn.commit()
+        

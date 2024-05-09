@@ -176,6 +176,7 @@
             DeleteLocationButton.TabIndex = 6;
             DeleteLocationButton.Text = "Delete Location";
             DeleteLocationButton.UseVisualStyleBackColor = true;
+            DeleteLocationButton.Click += DeleteLocationButton_Click;
             DeleteLocationButton.MouseClick += DeleteLocationButton_MouseClick;
             // 
             // AddLocationButton
@@ -187,6 +188,7 @@
             AddLocationButton.TabIndex = 5;
             AddLocationButton.Text = "Add New Loc";
             AddLocationButton.UseVisualStyleBackColor = true;
+            AddLocationButton.Click += AddLocationButton_Click;
             // 
             // AdminActionsBox
             // 
@@ -211,6 +213,7 @@
             EditUserButton.TabIndex = 2;
             EditUserButton.Text = "Edit User";
             EditUserButton.UseVisualStyleBackColor = true;
+            EditUserButton.Click += EditUserButton_Click;
             // 
             // DeleteUserButton
             // 
@@ -221,6 +224,7 @@
             DeleteUserButton.TabIndex = 1;
             DeleteUserButton.Text = "Delete User";
             DeleteUserButton.UseVisualStyleBackColor = true;
+            DeleteUserButton.Click += DeleteUserButton_Click;
             // 
             // AddUserButton
             // 
@@ -231,6 +235,7 @@
             AddUserButton.TabIndex = 0;
             AddUserButton.Text = "Add User";
             AddUserButton.UseVisualStyleBackColor = true;
+            AddUserButton.Click += AddUserButton_Click;
             // 
             // LocationEditBox
             // 

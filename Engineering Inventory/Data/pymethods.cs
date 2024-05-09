@@ -14,8 +14,8 @@ namespace Engineering_Inventory
         public void InitializePythonEngine()
         {
             // Correctly set the path to the Python DLL
-            Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
-            //Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
+            //Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
+            Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
 
             // Initialize Python engine
             PythonEngine.Initialize();
@@ -238,7 +238,7 @@ namespace Engineering_Inventory
            {
                 try
                 {
-                    string result = pythonModule.edit_location(location, module);
+                    string result = pythonModule.edit_loc(location, module);
                     return result;
                 }
                 catch
@@ -251,6 +251,45 @@ namespace Engineering_Inventory
                 return "Location cannot be null";
             }
         }
+
+        public string AddUser(string username, string password, Dictionary<string, object> permissions)
+        {
+            using (Py.GIL())
+            {
+                try
+                {
+                    PyDict pyDict = new();
+                    foreach (var item in permissions)
+                    {
+                        pyDict[item.Key.ToPython()] = item.Value.ToPython();
+                    }
+                    string result = pythonModule.add_user(username, password, pyDict).ToString();
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    // Return error message directly if something goes wrong
+                    return $"Failed to add user: {ex.Message}";
+                }
+            }
+        }
+
+        public string DeleteUser(string username)
+        {
+            try
+            {
+                // Attempt to delete the part and return the result.
+                string result = pythonModule.delete_user(username);
+                return result;
+            }
+            catch
+            {
+                // If an error occurs, show a message box and return false.
+                string message = "There was an error deleting the user";
+                return message;
+            }
+        }
+
     }
 }
 
