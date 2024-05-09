@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace Engineering_Inventory
+﻿namespace Engineering_Inventory
 {
     public partial class AddUserWindow : Form
     {
@@ -30,6 +20,7 @@ namespace Engineering_Inventory
             }
             string result = Program.pI.AddUser(UserNameBox.Text, PasswordBox.Text, permissions);
             MessageBox.Show(result);
+            AddUserWindow_Load(sender, e);
         }
         private void CancelButton_Click(object sender, EventArgs e)
         {
@@ -74,10 +65,18 @@ namespace Engineering_Inventory
             {
                 if (control is CheckBox checkBox)
                 {
-                    if (control.Text == Program.user_site)
+                    if (control.Text == Program.user_site || control.Text == "Edit Inventory")
                     {
                         checkBox.Checked = true;
                     }
+                    else
+                    {
+                        checkBox.Checked = false;
+                    }
+                }
+                else if (control is TextBox textBox)
+                {
+                    textBox.Text = "";
                 }
             }
         }

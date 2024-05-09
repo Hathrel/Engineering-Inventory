@@ -1,9 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
-using System.Xml.Linq;
-using Python.Runtime;
+﻿using Python.Runtime;
 
 namespace Engineering_Inventory
 {
@@ -13,18 +8,19 @@ namespace Engineering_Inventory
 
         public void InitializePythonEngine()
         {
-            // Correctly set the path to the Python DLL
-            //Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
-            Runtime.PythonDLL = @"C:\Users\Derek\AppData\Local\Programs\Python\Python312\python312.dll";
+            Runtime.PythonDLL = @"C:\Users\dboyer\AppData\Local\Programs\Python\Python312\python312.dll";
+            //string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            //string configFilePath = Path.Combine(baseDirectory, "Data", "config.json");
+            string configFilePath = "C:\\Users\\dboyer\\source\\repos\\Engineering-Inventory\\Engineering Inventory\\Data\\config.json";
 
-            // Initialize Python engine
             PythonEngine.Initialize();
 
-            // Acquire the Python Global Interpreter Lock
             using (Py.GIL())
             {
-                // Import the Python module
                 pythonModule = Py.Import("Data.EngInvDB");
+
+                PyObject globals = pythonModule.GetAttr("__dict__");
+                globals.SetItem("config_path", new PyString(configFilePath));
             }
         }
 
@@ -287,6 +283,124 @@ namespace Engineering_Inventory
                 // If an error occurs, show a message box and return false.
                 string message = "There was an error deleting the user";
                 return message;
+            }
+        }
+
+public Dictionary<string, object> GetUserInfo(string username)
+    {
+        using (Py.GIL())  // Ensure the Global Interpreter Lock is held while interacting with Python objects
+        {
+            dynamic result = pythonModule.get_user_info(username);
+            PyObject pyObj = result as PyObject;
+
+            if (pyObj != null)
+            {
+                // Get Python's dict type and check if pyObj is an instance of dict
+                PyObject dictType = Py.Import("builtins").GetAttr("dict");
+                PyObject isinstance = Py.Import("builtins").GetAttr("isinstance");
+                PyObject[] args = new PyObject[2] { pyObj, dictType };
+                bool isDict = isinstance.Invoke(args).As<bool>();
+
+                if (isDict)
+                {
+                    PyDict dict = new PyDict(pyObj); // Safely cast to PyDict
+
+                    Dictionary<string, object> userInfo = new Dictionary<string, object>();
+                    foreach (PyObject key in dict.Keys())
+                    {
+                        string keyStr = key.As<string>();
+                        PyObject value = dict[keyStr];
+
+                        var pythonType = value.GetPythonType().Name;
+                        if (pythonType.Equals("int") || pythonType.Equals("float"))
+                            userInfo[keyStr] = value.As<double>();
+                        else if (pythonType.Equals("str"))
+                            userInfo[keyStr] = value.As<string>();
+                        else if (pythonType.Equals("bool"))
+                            userInfo[keyStr] = value.As<bool>();
+                        else
+                            userInfo[keyStr] = value.ToString();
+                    }
+                    return userInfo;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Expected a dictionary from Python function but got something else.");
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("The result object is not a PyObject.");
+            }
+        }
+    }
+
+    public void TestMethod(string username = "dboyer")
+    {
+        using (Py.GIL()) // Ensure the GIL is held while interacting with Python objects
+        {
+            dynamic result = pythonModule.get_user_info(username);
+
+            // Checking the type of the result and displaying it
+            if (result != null)
+            {
+                PyObject pyObj = result as PyObject;
+                if (pyObj != null)
+                {
+                    // Get the Python type of the object
+                    PyObject typeObj = pyObj.GetPythonType();
+                    string typeName = typeObj.ToString();
+
+                    // Collect all attributes and values if it's a dictionary
+                    string attributes = "";
+                    if (pyObj is PyDict dict)
+                    {
+                        foreach (var key in dict.Keys())
+                        {
+                            string keyStr = key.As<string>();
+                            PyObject value = dict[keyStr];
+                            attributes += $"{keyStr}: {value.ToString()}, ";
+                        }
+                    }
+
+                    // Display the type and attributes in a message box
+                    MessageBox.Show($"Object Type: {typeName}\nAttributes: {attributes}", "Python Object Info");
+                }
+                else
+                {
+                    MessageBox.Show("The returned object is not a valid PyObject.", "Error");
+                }
+            }
+            else
+            {
+                MessageBox.Show("No object was returned from Python.", "Error");
+            }
+        }
+    }
+
+
+    public string SetUserInfo(string username, Dictionary<string, object> userinfo)
+        {
+            using (Py.GIL()) // Ensure the Global Interpreter Lock is held while interacting with Python
+            {
+                try
+                {
+                    PyDict pyDict = new PyDict();
+                    foreach (var item in userinfo)
+                    {
+                        pyDict[item.Key.ToPython()] = item.Value.ToPython();
+                    }
+                    dynamic result = pythonModule.set_user_info(username, pyDict);
+                    return result;
+                }
+                catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException ex)
+                {
+                    return ($"Error accessing properties from the Python response: " + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    return ($"Failed to set user info: {ex.Message}");
+                }
             }
         }
 

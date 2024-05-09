@@ -177,7 +177,6 @@
             DeleteLocationButton.Text = "Delete Location";
             DeleteLocationButton.UseVisualStyleBackColor = true;
             DeleteLocationButton.Click += DeleteLocationButton_Click;
-            DeleteLocationButton.MouseClick += DeleteLocationButton_MouseClick;
             // 
             // AddLocationButton
             // 

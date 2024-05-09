@@ -1,9 +1,12 @@
 import pyodbc as db
 from datetime import datetime
+import json
+import openpyxl as xl
 
 global user_name
 global user_site
-
+global config_path
+                           
 class QuantityException(Exception):
     def __init__(self):
         self.message = "Not enough in location to complete this tranasaction"
@@ -56,13 +59,18 @@ def database_login(username, password, site):
             return (False, "Sorry, there was an error with the database. Please try again.", {})
 
 def open_database_connection():
-    db_path = r"C:/Users/Derek/source/repos/Engineering-Inventory/Engineering_Inventory.accdb"
-    connection_string = fr"DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={db_path};"
     try:
+        with open(config_path, 'r') as file:
+            config = json.load(file)
+        
+        db_path = config['database_path']
+        
+        connection_string = f"DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={db_path};"
+        
         connection = db.connect(connection_string)
         return connection
-    except db.Error as e:
-        print(f"Error connecting to database: {e}")
+    except Exception as e:
+        print(f"Error connecting to database or reading the config file: {e}")
         return None
 
 def query_table(cursor,table_name):
@@ -348,8 +356,7 @@ def delete_part(part_number):
 
 def get_part_info(part_number):
     try:
-        with open_database_connection() as conn:
-            cursor = conn.cursor()
+        with open_database_connection() as conn, conn.cursor() as cursor:
             query = """
                 SELECT Part_Description, MIN, MAX, Lead_Time, Supplier, Price, Comment, Purchase_Link
                 FROM Part_List 
@@ -358,9 +365,7 @@ def get_part_info(part_number):
             cursor.execute(query, (part_number,))
             row = cursor.fetchone()
             if row:
-                # Get the column names
                 column_names = [desc[0] for desc in cursor.description]
-                # Create a dictionary where each value is converted to a string
                 part_info_dict = {column_names[i]: str(row[i]) for i in range(len(column_names))}
                 return part_info_dict
             else:
@@ -371,15 +376,11 @@ def get_part_info(part_number):
     
 def set_part_info(part_number, part_description, minn=None, maxx=None, lead_time=None, supplier=None, price=None, comment=None, purchase_link=None):
     try:
-        with open_database_connection() as conn:
-            with conn.cursor() as cursor:
-                # Check if the part number actually exists
+        with open_database_connection() as conn, conn.cursor() as cursor:
                 check_sql = "SELECT COUNT(*) FROM Part_List WHERE Part_Number = ?"
                 cursor.execute(check_sql, (part_number,))
                 if cursor.fetchone()[0] == 0:
                     return False, "Error: Part number does not exist."
-
-                # Update the part in Part_List
                 update_sql = """
                     UPDATE Part_List SET
                         Part_Description = ?,
@@ -401,7 +402,7 @@ def set_part_info(part_number, part_description, minn=None, maxx=None, lead_time
                     None if price is None else float(price),
                     comment,
                     purchase_link,
-                    part_number  # Ensure this is the last parameter to match the WHERE clause
+                    part_number
                 )
                 cursor.execute(update_sql, params)
                 conn.commit()
@@ -410,10 +411,17 @@ def set_part_info(part_number, part_description, minn=None, maxx=None, lead_time
         return (False, str(e))
 
 def edit_loc(location, module):
-    user_site = "CVG2"
     try:
         with open_database_connection() as conn, conn.cursor() as cursor:
             table_name = f"Locations_{user_site}"
+
+            if not query_table(cursor, table_name):
+                cursor.execute(f"""
+                CREATE TABLE {table_name} (
+                    Location VARCHAR(255) 
+                    )
+                    """)
+            conn.commit()
 
             if module == "Add":
                 # Check if the location already exists
@@ -449,8 +457,8 @@ def add_user(username, password, permissions):
         admin = permissions["Admin"];
         cvg2permit = permissions["CVG2"];
         lex1permit = permissions["LEX1"];
-        swedespermit = permissions["117"];
-        westchesterpermit = permissions["1305"];
+        swedespermit = permissions["SWEDESBORO_117"];
+        westchesterpermit = permissions["WESTCHESTER_1305"];
         yyzpermit = permissions["YYZ"];
 
         with open_database_connection() as conn, conn.cursor() as cursor:
@@ -460,7 +468,7 @@ def add_user(username, password, permissions):
                     return "User already exists in database"
 
                 insert_user = """
-                INSERT INTO Login_Data (Username, Password, Add_Part_Permit, Add_Loc_Permit, Edit_Permit, Admin, CVG2, 117, LEX1, 1305, YYZ)
+                INSERT INTO Login_Data (Username, Password, Add_Part_Permit, Add_Loc_Permit, Edit_Permit, Admin, CVG2, SWEDESBORO_117, LEX1, WESTCHESTER_1305, YYZ)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
                 params = (
@@ -491,6 +499,84 @@ def delete_user(username):
                 return "User deleted successfully."
         except Exception as e:
             return f"Error deleting user: {e}"
+
+def get_user_info(username):
+    try:
+        with open_database_connection() as conn, conn.cursor() as cursor:
+            query = """
+                SELECT 
+                    Add_Part_Permit, 
+                    Add_Loc_Permit, 
+                    Edit_Permit, 
+                    Admin, 
+                    CVG2, 
+                    SWEDESBORO_117,
+                    LEX1, 
+                    WESTCHESTER_1305,
+                    YYZ
+                FROM Login_Data 
+                WHERE Username = ?
+            """
+            cursor.execute(query, (username,))
+            row = cursor.fetchone()
+            if row:
+                column_names = [desc[0] for desc in cursor.description]
+                return {column_names[i]: row[i] for i in range(len(column_names))}
+            else:
+                return {}
+    except Exception as e:
+        print(f"Error retrieving user information: {e}")
+        return {}
+
+def set_user_info(username, userinfo):
+    try:
+        password = userinfo["Password"]
+        add_part = userinfo["Edit Parts"];
+        add_loc = userinfo["Edit Locations"];
+        edit = userinfo["Edit Inventory"];
+        admin = userinfo["Admin"];
+        cvg2permit = userinfo["CVG2"];
+        lex1permit = userinfo["LEX1"];
+        swedespermit = userinfo["SWEDESBORO_117"];
+        westchesterpermit = userinfo["WESTCHESTER_1305"];
+        yyzpermit = userinfo["YYZ"];
+        with open_database_connection() as conn, conn.cursor() as cursor:
+                check_sql = "SELECT COUNT(*) FROM Login_Data WHERE Username = ?"
+                cursor.execute(check_sql, (username,))
+                if cursor.fetchone()[0] == 0:
+                    return False, "Error: User does not exist."
+                update_sql = """
+                    UPDATE Login_Data SET
+                        Password = ?,
+                        Add_Part_Permit = ?,
+                        Edit_Permit = ?,
+                        Add_Loc_Permit = ?,
+                        Admin = ?,
+                        CVG2 = ?,
+                        SWEDESBORO_117 = ?,
+                        LEX1 = ?,
+                        WESTCHESTER_1305 = ?,
+                        YYZ = ?
+                    WHERE Username = ?
+                """
+                params = (
+                    password,
+                    False if add_part is None else add_part,
+                    False if add_loc is None else add_loc,
+                    False if edit is None else edit,
+                    False if admin is None else admin,
+                    False if cvg2permit is None else cvg2permit,
+                    False if lex1permit is None else lex1permit,
+                    False if swedespermit is None else swedespermit,
+                    False if westchesterpermit is None else westchesterpermit,
+                    False if yyzpermit is None else yyzpermit,
+                    username
+                )
+                cursor.execute(update_sql, params)
+                conn.commit()
+                return ("User info updated successfully.")
+    except Exception as e:
+        return (str(e))
        
 def log_transaction(part_number, old_location, new_location, transaction_qty, new_qty, total_qty, module):
     with open_database_connection() as conn, conn.cursor() as cursor:
@@ -528,4 +614,5 @@ def log_transaction(part_number, old_location, new_location, transaction_qty, ne
 
         cursor.execute("INSERT INTO Transaction_Logs (Part_ID, Old_Location_ID, New_Location_ID, Transaction_Quantity, New_Quantity, Total_Quantity, User_Name, Site, Module, Transaction_Date, Tran_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (part_number, old_location, new_location, transaction_qty, new_qty, total_qty, username, site, module, date, primary_key))
         conn.commit()
-        
+
+print(get_user_info("dboyer"))

@@ -87,7 +87,7 @@
             // SiteSelect
             // 
             SiteSelect.FormattingEnabled = true;
-            SiteSelect.Items.AddRange(new object[] { "CVG2", "LEX1", "117", "1305", "1365", "YYZ" });
+            SiteSelect.Items.AddRange(new object[] { "CVG2", "LEX1", "SWEDESBORO_117", "WESTCHESTER_1305", "YYZ" });
             SiteSelect.Location = new Point(12, 115);
             SiteSelect.Name = "SiteSelect";
             SiteSelect.Size = new Size(100, 23);

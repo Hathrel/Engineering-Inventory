@@ -134,27 +134,28 @@
             // SwedesBox
             // 
             SwedesBox.AutoSize = true;
-            SwedesBox.Location = new Point(68, 109);
+            SwedesBox.ImageAlign = ContentAlignment.BottomRight;
+            SwedesBox.Location = new Point(64, 109);
             SwedesBox.Name = "SwedesBox";
-            SwedesBox.Size = new Size(44, 19);
+            SwedesBox.Size = new Size(124, 19);
             SwedesBox.TabIndex = 6;
-            SwedesBox.Text = "117";
+            SwedesBox.Text = "SWEDESBORO_117";
             SwedesBox.UseVisualStyleBackColor = true;
             // 
             // WestChesterBox
             // 
             WestChesterBox.AutoSize = true;
-            WestChesterBox.Location = new Point(68, 134);
+            WestChesterBox.Location = new Point(64, 134);
             WestChesterBox.Name = "WestChesterBox";
-            WestChesterBox.Size = new Size(50, 19);
+            WestChesterBox.Size = new Size(131, 19);
             WestChesterBox.TabIndex = 7;
-            WestChesterBox.Text = "1305";
+            WestChesterBox.Text = "WESTCHESTER_1305";
             WestChesterBox.UseVisualStyleBackColor = true;
             // 
             // OtherPermissionsLabel
             // 
             OtherPermissionsLabel.AutoSize = true;
-            OtherPermissionsLabel.Location = new Point(145, 91);
+            OtherPermissionsLabel.Location = new Point(224, 91);
             OtherPermissionsLabel.Name = "OtherPermissionsLabel";
             OtherPermissionsLabel.Size = new Size(103, 15);
             OtherPermissionsLabel.TabIndex = 13;
@@ -165,7 +166,7 @@
             EditInventoryBox.AutoSize = true;
             EditInventoryBox.Checked = true;
             EditInventoryBox.CheckState = CheckState.Checked;
-            EditInventoryBox.Location = new Point(149, 109);
+            EditInventoryBox.Location = new Point(196, 109);
             EditInventoryBox.Name = "EditInventoryBox";
             EditInventoryBox.Size = new Size(99, 19);
             EditInventoryBox.TabIndex = 8;
@@ -175,7 +176,7 @@
             // EditPartsBox
             // 
             EditPartsBox.AutoSize = true;
-            EditPartsBox.Location = new Point(149, 134);
+            EditPartsBox.Location = new Point(301, 109);
             EditPartsBox.Name = "EditPartsBox";
             EditPartsBox.Size = new Size(75, 19);
             EditPartsBox.TabIndex = 9;
@@ -185,7 +186,7 @@
             // EditLocationsBox
             // 
             EditLocationsBox.AutoSize = true;
-            EditLocationsBox.Location = new Point(149, 159);
+            EditLocationsBox.Location = new Point(196, 134);
             EditLocationsBox.Name = "EditLocationsBox";
             EditLocationsBox.Size = new Size(100, 19);
             EditLocationsBox.TabIndex = 10;
@@ -195,7 +196,7 @@
             // AdminBox
             // 
             AdminBox.AutoSize = true;
-            AdminBox.Location = new Point(254, 109);
+            AdminBox.Location = new Point(302, 134);
             AdminBox.Name = "AdminBox";
             AdminBox.Size = new Size(62, 19);
             AdminBox.TabIndex = 11;
@@ -226,7 +227,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(321, 216);
+            ClientSize = new Size(405, 209);
             Controls.Add(CancelButton);
             Controls.Add(SubmitButton);
             Controls.Add(AdminBox);

@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace Engineering_Inventory
+﻿namespace Engineering_Inventory
 {
     // MainForm.cs
     public partial class MainForm : Form
@@ -72,11 +70,6 @@ namespace Engineering_Inventory
             editPartWindow.ShowDialog();
         }
 
-        private void DeleteLocationButton_MouseClick(object sender, MouseEventArgs e)
-        {
-
-        }
-
         private void AddLocationButton_Click(object sender, EventArgs e)
         {
             EditLocationWindow editLocationWindow = new("Add");
@@ -97,14 +90,14 @@ namespace Engineering_Inventory
 
         private void DeleteUserButton_Click(object sender, EventArgs e)
         {
-
+            DeleteUserWindow deleteUserWindow = new();
+            deleteUserWindow.ShowDialog();
         }
 
         private void EditUserButton_Click(object sender, EventArgs e)
         {
-
+            EditUserWindow editUserWindow = new();
+            editUserWindow.ShowDialog();
         }
     }
 }
-
-
