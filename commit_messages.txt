@@ -1,0 +1,113 @@
+commit 952fb3d2f4a780eab33abf812ae55a772ee4cb8d
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Thu May 9 14:45:48 2024 -0400
+
+    Completed all base functionality. Working on setting up end user environment.
+
+commit 889e3429c206ed9b6a34abee27727e6e01aea7b8
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Wed May 8 22:31:13 2024 -0400
+
+    Completed Part Editing, completed location editing, completed adding new user, deleting user is nearly complete, just need front end
+
+commit 3382370ccb6e46c45a98f31ea60dda98eb14409a
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Wed May 8 14:53:00 2024 -0400
+
+    All part edit functionality complete. Began work on location edit functionality.
+
+commit f372353f927eeb4d6d3e6c834e4c48f81dcf0da2
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Tue May 7 21:59:37 2024 -0400
+
+    Completed cycle count functionality. Began on Add Part functionality.
+
+commit 090271c3f04759a25326dfa00e1ec842d1dc4e92
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Tue May 7 18:30:22 2024 -0400
+
+    Cycle Counts Functionality complete
+
+commit 9bff79c3809a92ccf6a1e90093a53fda050cfff8
+Merge: 1f51acf 9438779
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Tue May 7 16:44:46 2024 -0400
+
+    Post-Pull Commit
+
+commit 1f51acf975577e0c961b9abca35824568192338b
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Tue May 7 16:43:19 2024 -0400
+
+    Commit before pull
+
+commit 9438779f4a7c469ee4a2763a3d29985c661c034b
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Tue May 7 14:58:02 2024 -0400
+
+    Partially implemented cycle counts, corrected a few bugs
+
+commit 4836d4abe1418301a29fc5d9656629066224d9b8
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Mon May 6 22:42:41 2024 -0400
+
+    Implemented Cycle Count pull and relevant interface behavior. Need to work on returning the data to the DB once a cycle count is complete. Consider removing the need to pull out the location qty, this can happen in Python during the DB write action.
+
+commit c9307481b3844bb9cdef5c2d7024c31bf78f2419
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Mon May 6 15:01:18 2024 -0400
+
+    Implemented relationship creation for new tables to manage DB relationships. Finalized Bin Move functionality. Began work on Cycle Count functionality.
+
+commit 600e8998e4bcc4924def52292ce0c9281ee1bce1
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Sun May 5 23:09:43 2024 -0400
+
+    Fixed and implemented site functionality. Should now be scalable to several sites. All previous functionality still intact.
+
+commit 1729578ef8b73212804b41031670619ddb65d11e
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Fri May 3 15:08:36 2024 -0400
+
+    Fixed Insert again. Rolled back and removed site functionality.
+    
+    Try to reimplement but remember to put quotations around interpolations
+
+commit 174901fae793d2a0a429b141d9c0cf2a0cf1b3a7
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Thu May 2 23:01:29 2024 -0400
+
+    Broke insert function
+    Tried to implement custom site interactions with database
+
+commit d4e5d21dfb943ceb927f83c929238ab656548ad6
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Thu May 2 14:55:19 2024 -0400
+
+    Set up backend logic for picking
+    Implemented a transaction log
+    Finished insert inventory functionality
+
+commit 1802e40602757b0fea2fabf65d04f636506e72d3
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Wed May 1 14:46:19 2024 -0400
+
+    Login page fully functional, Main page started, Insert Inventory started. Crash at python execution during insert inventory
+
+commit 4ab22f1f90e5a2064af06b6f4bef703f96e08034
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Tue Apr 30 23:22:01 2024 -0400
+
+    Fixed login logic. Completed login window functionality. TODO: Figure out why MainForm keeps closing as soon as it opens
+
+commit 9bd890a0fbbb97f340ee8283df43b556370eff63
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Tue Apr 30 15:19:36 2024 -0400
+
+    Add project files.
+
+commit 90f5441718b510cffc4fecb561fa1f6a97ced669
+Author: Hathrel <hathreldb@gmail.com>
+Date:   Tue Apr 30 15:19:32 2024 -0400
+
+    Add .gitattributes and .gitignore.
